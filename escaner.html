@@ -171,33 +171,65 @@
     verificar(decodedText.trim());
   }
 
+  function jsonpRequest(url, onSuccess, onError){
+    const callbackName = 'jsonpCallback_' + Date.now() + '_' + Math.floor(Math.random()*10000);
+    const script = document.createElement('script');
+    let finished = false;
+
+    const timeout = setTimeout(function(){
+      if(finished) return;
+      finished = true;
+      cleanup();
+      onError();
+    }, 15000);
+
+    function cleanup(){
+      clearTimeout(timeout);
+      delete window[callbackName];
+      if(script.parentNode) script.parentNode.removeChild(script);
+    }
+
+    window[callbackName] = function(data){
+      if(finished) return;
+      finished = true;
+      cleanup();
+      onSuccess(data);
+    };
+
+    script.src = url + (url.indexOf('?') > -1 ? '&' : '?') + 'callback=' + callbackName;
+    script.onerror = function(){
+      if(finished) return;
+      finished = true;
+      cleanup();
+      onError();
+    };
+    document.body.appendChild(script);
+  }
+
   function verificar(code){
     const url = TICKET_API_URL + '?action=verificar&code=' + encodeURIComponent(code);
-    fetch(url)
-      .then(function(res){ return res.json(); })
-      .then(function(data){
-        const resultEl = document.getElementById('result');
-        const verdictEl = document.getElementById('result-verdict');
-        const detailEl = document.getElementById('result-detail');
+    jsonpRequest(url, function(data){
+      const resultEl = document.getElementById('result');
+      const verdictEl = document.getElementById('result-verdict');
+      const detailEl = document.getElementById('result-detail');
 
-        if(data.valid){
-          resultEl.className = 'valid';
-          verdictEl.textContent = '✅ VÁLIDA';
-          detailEl.textContent = data.name + ' — ' + data.ticketType;
-        } else {
-          resultEl.className = 'invalid';
-          verdictEl.textContent = '❌ ' + (data.reason || 'NO VÁLIDA').toUpperCase();
-          detailEl.textContent = data.name ? (data.name + ' — ' + data.ticketType) : 'Código no reconocido';
-        }
-        document.getElementById('scan-again').style.display = 'block';
-      })
-      .catch(function(){
-        const resultEl = document.getElementById('result');
+      if(data.valid){
+        resultEl.className = 'valid';
+        verdictEl.textContent = '✅ VÁLIDA';
+        detailEl.textContent = data.name + ' — ' + data.ticketType;
+      } else {
         resultEl.className = 'invalid';
-        document.getElementById('result-verdict').textContent = '⚠️ ERROR DE CONEXIÓN';
-        document.getElementById('result-detail').textContent = 'Inténtalo de nuevo';
-        document.getElementById('scan-again').style.display = 'block';
-      });
+        verdictEl.textContent = '❌ ' + (data.reason || 'NO VÁLIDA').toUpperCase();
+        detailEl.textContent = data.name ? (data.name + ' — ' + data.ticketType) : 'Código no reconocido';
+      }
+      document.getElementById('scan-again').style.display = 'block';
+    }, function(){
+      const resultEl = document.getElementById('result');
+      resultEl.className = 'invalid';
+      document.getElementById('result-verdict').textContent = '⚠️ ERROR DE CONEXIÓN';
+      document.getElementById('result-detail').textContent = 'Inténtalo de nuevo';
+      document.getElementById('scan-again').style.display = 'block';
+    });
   }
 
   document.getElementById('start-btn').addEventListener('click', startScanner);

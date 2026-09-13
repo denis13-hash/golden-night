@@ -903,8 +903,43 @@
   updateSurprises();
   setInterval(updateSurprises, 30000);
 
-  // GENERADOR DE ENTRADA QR (envío real por email vía Google Apps Script)
+  // GENERADOR DE ENTRADA QR (envío real por email vía Google Apps Script, con JSONP)
   const TICKET_API_URL = 'https://script.google.com/macros/s/AKfycbxMoVpKwKCIK-KTrMdTYUg-LcpDNIuvAUqlUUAOAgUBeDYDtVMQR4XKUmdMfJrmQdKvkA/exec';
+
+  function jsonpRequest(url, onSuccess, onError){
+    const callbackName = 'jsonpCallback_' + Date.now() + '_' + Math.floor(Math.random()*10000);
+    const script = document.createElement('script');
+    let finished = false;
+
+    const timeout = setTimeout(function(){
+      if(finished) return;
+      finished = true;
+      cleanup();
+      onError();
+    }, 15000);
+
+    function cleanup(){
+      clearTimeout(timeout);
+      delete window[callbackName];
+      if(script.parentNode) script.parentNode.removeChild(script);
+    }
+
+    window[callbackName] = function(data){
+      if(finished) return;
+      finished = true;
+      cleanup();
+      onSuccess(data);
+    };
+
+    script.src = url + (url.indexOf('?') > -1 ? '&' : '?') + 'callback=' + callbackName;
+    script.onerror = function(){
+      if(finished) return;
+      finished = true;
+      cleanup();
+      onError();
+    };
+    document.body.appendChild(script);
+  }
 
   document.getElementById('qr-form').addEventListener('submit', function(e){
     e.preventDefault();
@@ -924,27 +959,24 @@
       '&email=' + encodeURIComponent(email) +
       '&ticketType=' + encodeURIComponent(type);
 
-    fetch(url)
-      .then(function(res){ return res.json(); })
-      .then(function(data){
-        btn.textContent = originalText;
-        btn.disabled = false;
-        if(data.success){
-          document.getElementById('qr-ticket-name').textContent = '¡Entrada enviada!';
-          document.getElementById('qr-ticket-meta').textContent = 'Revisa ' + email + ' (y la carpeta de spam, por si acaso)';
-          document.getElementById('qr-ticket-code').textContent = 'Código: ' + data.code;
-          document.getElementById('qr-result').classList.add('show');
-          document.getElementById('qr-result').scrollIntoView({ behavior: 'smooth', block: 'center' });
-          document.getElementById('qr-form').reset();
-        } else {
-          alert('No se pudo generar la entrada. Inténtalo de nuevo en unos segundos.');
-        }
-      })
-      .catch(function(){
-        btn.textContent = originalText;
-        btn.disabled = false;
-        alert('No se pudo conectar. Comprueba tu conexión e inténtalo de nuevo.');
-      });
+    jsonpRequest(url, function(data){
+      btn.textContent = originalText;
+      btn.disabled = false;
+      if(data.success){
+        document.getElementById('qr-ticket-name').textContent = '¡Entrada enviada!';
+        document.getElementById('qr-ticket-meta').textContent = 'Revisa ' + email + ' (y la carpeta de spam, por si acaso)';
+        document.getElementById('qr-ticket-code').textContent = 'Código: ' + data.code;
+        document.getElementById('qr-result').classList.add('show');
+        document.getElementById('qr-result').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        document.getElementById('qr-form').reset();
+      } else {
+        alert('No se pudo generar la entrada. Inténtalo de nuevo en unos segundos.');
+      }
+    }, function(){
+      btn.textContent = originalText;
+      btn.disabled = false;
+      alert('No se pudo conectar. Comprueba tu conexión e inténtalo de nuevo.');
+    });
   });
 
   // FAQ
