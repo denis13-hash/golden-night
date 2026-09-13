@@ -187,7 +187,11 @@
     }
   }
 
+  let alreadyHandled = false;
+
   function onScanSuccess(decodedText){
+    if(alreadyHandled) return;
+    alreadyHandled = true;
     stopScanner();
     verificar(decodedText.trim());
   }
@@ -230,31 +234,36 @@
   function verificar(code){
     const url = TICKET_API_URL + '?action=verificar&code=' + encodeURIComponent(code);
     jsonpRequest(url, function(data){
-      const resultEl = document.getElementById('result');
-      const verdictEl = document.getElementById('result-verdict');
-      const detailEl = document.getElementById('result-detail');
-
-      if(data.valid){
-        resultEl.className = 'valid';
-        verdictEl.textContent = '✅ VÁLIDA';
-        detailEl.textContent = data.name + ' — ' + data.ticketType;
-      } else {
-        resultEl.className = 'invalid';
-        verdictEl.textContent = '❌ ' + (data.reason || 'NO VÁLIDA').toUpperCase();
-        detailEl.textContent = data.name ? (data.name + ' — ' + data.ticketType) : 'Código no reconocido';
-      }
-      document.getElementById('scan-again').style.display = 'block';
+      showResult(data.valid, data);
     }, function(){
-      const resultEl = document.getElementById('result');
-      resultEl.className = 'invalid';
-      document.getElementById('result-verdict').textContent = '⚠️ ERROR DE CONEXIÓN';
-      document.getElementById('result-detail').textContent = 'Inténtalo de nuevo';
-      document.getElementById('scan-again').style.display = 'block';
+      showResult(false, { reason: 'ERROR DE CONEXIÓN' });
     });
+  }
+
+  function showResult(isValid, data){
+    const resultEl = document.getElementById('result');
+    const verdictEl = document.getElementById('result-verdict');
+    const detailEl = document.getElementById('result-detail');
+
+    resultEl.style.display = 'block';
+    resultEl.style.borderColor = isValid ? '#29D9FF' : '#FF2E9A';
+    resultEl.style.background = isValid ? 'rgba(41,217,255,0.08)' : 'rgba(255,46,154,0.08)';
+
+    if(isValid){
+      verdictEl.style.color = '#7FEBFF';
+      verdictEl.textContent = '✅ VÁLIDA';
+      detailEl.textContent = (data.name || '') + ' — ' + (data.ticketType || '');
+    } else {
+      verdictEl.style.color = '#FF8AD4';
+      verdictEl.textContent = '❌ ' + (data.reason || 'NO VÁLIDA').toUpperCase();
+      detailEl.textContent = data.name ? (data.name + ' — ' + data.ticketType) : 'Código no reconocido';
+    }
+    document.getElementById('scan-again').style.display = 'block';
   }
 
   document.getElementById('start-btn').addEventListener('click', startScanner);
   document.getElementById('scan-again').addEventListener('click', function(){
+    alreadyHandled = false;
     document.getElementById('result').style.display = 'none';
     document.getElementById('scan-again').style.display = 'none';
     document.getElementById('start-btn').style.display = 'block';
