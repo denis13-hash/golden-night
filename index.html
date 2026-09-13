@@ -918,11 +918,13 @@
     btn.textContent = 'Enviando…';
     btn.disabled = true;
 
-    fetch(TICKET_API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action: 'generar', name: name, email: email, ticketType: type })
-    })
+    const url = TICKET_API_URL +
+      '?action=generar' +
+      '&name=' + encodeURIComponent(name) +
+      '&email=' + encodeURIComponent(email) +
+      '&ticketType=' + encodeURIComponent(type);
+
+    fetch(url)
       .then(function(res){ return res.json(); })
       .then(function(data){
         btn.textContent = originalText;
