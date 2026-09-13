@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Golden Night — Escáner de entradas</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link href="https://fonts.googleapis.com/css2?family=Prata&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink: #06030F;
+    --gold: #FF2E9A;
+    --gold-light: #FF8AD4;
+    --blue: #29D9FF;
+    --blue-light: #7FEBFF;
+    --cream: #F6EEDC;
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  body{
+    background: var(--ink);
+    color: var(--cream);
+    font-family: 'Work Sans', sans-serif;
+    min-height: 100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding: 30px 16px 60px;
+  }
+  h1{
+    font-family:'Prata', serif;
+    font-size: 26px;
+    color: var(--gold-light);
+    margin-bottom: 6px;
+    text-align:center;
+  }
+  .subtitle{ font-size: 13px; color: rgba(246,238,220,0.55); margin-bottom: 30px; text-align:center; }
+
+  /* GATE DE CONTRASEÑA */
+  #gate{
+    width: 100%; max-width: 360px;
+    text-align:center;
+  }
+  #gate input{
+    width: 100%;
+    padding: 14px 16px;
+    background: rgba(246,238,220,0.05);
+    border: 1px solid rgba(255,46,154,0.35);
+    color: var(--cream);
+    font-size: 15px;
+    text-align:center;
+    letter-spacing: 0.1em;
+    margin-bottom: 14px;
+  }
+  #gate button{
+    width:100%;
+    padding: 14px;
+    background: linear-gradient(90deg, var(--gold-light), var(--blue-light));
+    border: 1px solid var(--gold);
+    color: #180620;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  #gate-error{ color: var(--gold-light); font-size: 12.5px; margin-top: 10px; min-height: 16px; }
+
+  /* ESCÁNER */
+  #scanner-app{ display:none; width: 100%; max-width: 420px; }
+  #reader{
+    width: 100%;
+    border: 2px solid var(--gold-light);
+    overflow:hidden;
+  }
+  #start-btn{
+    width:100%;
+    margin-top: 16px;
+    padding: 15px;
+    background: linear-gradient(90deg, var(--gold-light), var(--blue-light));
+    border: 1px solid var(--gold);
+    color: #180620;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+  }
+
+  #result{
+    margin-top: 24px;
+    padding: 24px;
+    text-align:center;
+    display:none;
+    border: 2px solid;
+  }
+  #result.valid{ border-color: var(--blue); background: rgba(41,217,255,0.08); display:block; }
+  #result.invalid{ border-color: var(--gold); background: rgba(255,46,154,0.08); display:block; }
+  #result .verdict{ font-family:'Prata', serif; font-size: 26px; margin-bottom: 10px; }
+  #result.valid .verdict{ color: var(--blue-light); }
+  #result.invalid .verdict{ color: var(--gold-light); }
+  #result .detail{ font-size: 14px; color: var(--cream); line-height: 1.6; }
+
+  #scan-again{
+    margin-top: 18px;
+    width:100%;
+    padding: 13px;
+    background: transparent;
+    border: 1px solid rgba(246,238,220,0.3);
+    color: var(--cream);
+    font-size: 13px;
+    cursor: pointer;
+    display:none;
+  }
+</style>
+</head>
+<body>
+
+  <h1>Golden Night</h1>
+  <div class="subtitle">Escáner de entradas — solo personal autorizado</div>
+
+  <div id="gate">
+    <input type="password" id="gate-password" placeholder="Contraseña">
+    <button id="gate-submit">Entrar</button>
+    <div id="gate-error"></div>
+  </div>
+
+  <div id="scanner-app">
+    <div id="reader"></div>
+    <button id="start-btn">Activar cámara</button>
+    <div id="result">
+      <div class="verdict" id="result-verdict"></div>
+      <div class="detail" id="result-detail"></div>
+    </div>
+    <button id="scan-again">Escanear otra entrada</button>
+  </div>
+
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script>
+  // ⚠️ Cambia esta contraseña por la que quieras usar en la puerta
+  const DOOR_PASSWORD = 'BLGNRD26';
+  const TICKET_API_URL = 'https://script.google.com/macros/s/AKfycbxMoVpKwKCIK-KTrMdTYUg-LcpDNIuvAUqlUUAOAgUBeDYDtVMQR4XKUmdMfJrmQdKvkA/exec';
+
+  document.getElementById('gate-submit').addEventListener('click', function(){
+    const val = document.getElementById('gate-password').value;
+    if(val === DOOR_PASSWORD){
+      document.getElementById('gate').style.display = 'none';
+      document.getElementById('scanner-app').style.display = 'block';
+    } else {
+      document.getElementById('gate-error').textContent = 'Contraseña incorrecta';
+    }
+  });
+
+  let html5QrCode;
+  let scanning = false;
+
+  function startScanner(){
+    html5QrCode = new Html5Qrcode('reader');
+    scanning = true;
+    html5QrCode.start(
+      { facingMode: 'environment' },
+      { fps: 10, qrbox: 240 },
+      onScanSuccess
+    );
+    document.getElementById('start-btn').style.display = 'none';
+  }
+
+  function stopScanner(){
+    if(html5QrCode && scanning){
+      html5QrCode.stop().then(function(){ scanning = false; });
+    }
+  }
+
+  function onScanSuccess(decodedText){
+    stopScanner();
+    verificar(decodedText.trim());
+  }
+
+  function verificar(code){
+    fetch(TICKET_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'verificar', code: code })
+    })
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        const resultEl = document.getElementById('result');
+        const verdictEl = document.getElementById('result-verdict');
+        const detailEl = document.getElementById('result-detail');
+
+        if(data.valid){
+          resultEl.className = 'valid';
+          verdictEl.textContent = '✅ VÁLIDA';
+          detailEl.textContent = data.name + ' — ' + data.ticketType;
+        } else {
+          resultEl.className = 'invalid';
+          verdictEl.textContent = '❌ ' + (data.reason || 'NO VÁLIDA').toUpperCase();
+          detailEl.textContent = data.name ? (data.name + ' — ' + data.ticketType) : 'Código no reconocido';
+        }
+        document.getElementById('scan-again').style.display = 'block';
+      })
+      .catch(function(){
+        const resultEl = document.getElementById('result');
+        resultEl.className = 'invalid';
+        document.getElementById('result-verdict').textContent = '⚠️ ERROR DE CONEXIÓN';
+        document.getElementById('result-detail').textContent = 'Inténtalo de nuevo';
+        document.getElementById('scan-again').style.display = 'block';
+      });
+  }
+
+  document.getElementById('start-btn').addEventListener('click', startScanner);
+  document.getElementById('scan-again').addEventListener('click', function(){
+    document.getElementById('result').style.display = 'none';
+    document.getElementById('scan-again').style.display = 'none';
+    document.getElementById('start-btn').style.display = 'block';
+  });
+</script>
+
+</body>
+</html>
