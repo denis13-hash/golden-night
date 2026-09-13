@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Golden Night — Fiesta de Fin de Año · Bella Ciao, Burgos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Prata&family=Work+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink: #06030F;
+    --ink-2: #0C0720;
+    --gold: #FF2E9A;
+    --gold-light: #FF8AD4;
+    --cream: #F6EEDC;
+    --violet: #29D9FF;
+    --blue: #29D9FF;
+    --blue-light: #7FEBFF;
+    --line: rgba(255,46,154,0.35);
+    --line-soft: rgba(255,46,154,0.16);
+  }
+
+  *{ box-sizing: border-box; margin:0; padding:0; }
+  html{ scroll-behavior: smooth; }
+
+  body{
+    background: var(--ink);
+    color: var(--cream);
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  .display{ font-family: 'Prata', serif; }
+
+  .wrap{ max-width: 720px; margin: 0 auto; padding: 0 24px; }
+  .wrap.wide{ max-width: 980px; }
+
+  /* ambient glow blobs */
+  .glow{
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(90px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.55;
+  }
+  .glow.gold{
+    width: 620px; height: 620px;
+    top: -220px; left: 50%;
+    transform: translateX(-50%);
+    background: radial-gradient(circle, rgba(255,46,154,0.45), transparent 70%);
+    animation: drift 14s ease-in-out infinite;
+  }
+  .glow.violet{
+    width: 460px; height: 460px;
+    top: 30%; right: -160px;
+    background: radial-gradient(circle, rgba(41,217,255,0.30), transparent 70%);
+    animation: drift 18s ease-in-out infinite reverse;
+  }
+  @keyframes drift{
+    0%,100%{ transform: translate(0,0) translateX(-50%); }
+    50%{ transform: translate(20px,30px) translateX(-50%); }
+  }
+  .glow.violet{ animation-name: driftAlt; }
+  @keyframes driftAlt{
+    0%,100%{ transform: translate(0,0); }
+    50%{ transform: translate(-30px,20px); }
+  }
+
+  /* floating sparkles */
+  .sparkle{
+    position: fixed;
+    width: 3px; height: 3px;
+    background: var(--gold-light);
+    border-radius: 50%;
+    opacity: 0;
+    z-index: 0;
+    animation: rise 9s linear infinite;
+  }
+  @keyframes rise{
+    0%{ opacity:0; transform: translateY(0); }
+    10%{ opacity:0.9; }
+    90%{ opacity:0.3; }
+    100%{ opacity:0; transform: translateY(-320px); }
+  }
+
+  main, header, section, footer{ position: relative; z-index: 1; }
+
+  /* HERO */
+  header{ padding: 84px 0 56px; text-align: center; }
+
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap: 8px;
+    border: 1px solid var(--line);
+    background: rgba(255,46,154,0.06);
+    padding: 7px 16px;
+    font-size: 11.5px;
+    letter-spacing: 0.14em;
+    color: var(--gold-light);
+    margin-bottom: 28px;
+  }
+  .badge .dot{
+    width:6px; height:6px; border-radius:50%;
+    background: var(--gold-light);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{ opacity: 1; transform: scale(1); }
+    50%{ opacity: 0.35; transform: scale(0.75); }
+  }
+
+  h1.title{
+    font-size: clamp(60px, 15vw, 120px);
+    letter-spacing: 0.05em;
+    line-height: 0.98;
+    background: linear-gradient(120deg, var(--gold-light) 0%, var(--blue-light) 50%, var(--gold-light) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 34px rgba(255,46,154,0.40)) drop-shadow(0 0 34px rgba(41,217,255,0.30));
+  }
+  h1.title .sub{
+    display:block;
+    font-size: 0.36em;
+    letter-spacing: 0.32em;
+    margin-top: 6px;
+  }
+
+  .subtitle{
+    margin-top: 22px;
+    font-size: 18px;
+    color: rgba(246,238,220,0.82);
+  }
+  .subtitle strong{ color: var(--cream); font-weight: 500; }
+
+  .meta-line{
+    margin-top: 10px;
+    font-size: 14.5px;
+    color: rgba(246,238,220,0.55);
+  }
+
+  .genres{
+    margin-top: 26px;
+    display:flex;
+    justify-content:center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .genre-chip{
+    font-size: 11.5px;
+    letter-spacing: 0.08em;
+    padding: 6px 14px;
+    border: 1px solid rgba(246,238,220,0.18);
+    color: rgba(246,238,220,0.75);
+    border-radius: 999px;
+  }
+
+  /* COUNTDOWN */
+  .countdown{
+    display:flex;
+    justify-content:center;
+    gap: 22px;
+    margin: 46px 0 8px;
+    flex-wrap: wrap;
+  }
+  .count-unit{
+    text-align:center;
+    min-width: 68px;
+    border: 1px solid var(--line-soft);
+    padding: 14px 10px 12px;
+    background: rgba(255,46,154,0.04);
+  }
+  .count-num{ font-family: 'Prata', serif; font-size: 34px; color: var(--cream); }
+  .count-label{ font-size: 10px; letter-spacing: 0.14em; color: rgba(246,238,220,0.5); margin-top: 6px; }
+
+  .hero-cta{
+    margin-top: 40px;
+  }
+  .hero-cta a{
+    display:inline-block;
+    padding: 16px 44px;
+    background: linear-gradient(90deg, var(--gold-light), var(--blue-light));
+    color: #180620;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    font-size: 15px;
+    text-decoration:none;
+    box-shadow: 0 0 0 rgba(255,46,154,0.5);
+    transition: box-shadow 0.3s ease, transform 0.25s ease;
+  }
+  .hero-cta a:hover{
+    box-shadow: 0 0 36px rgba(255,46,154,0.55);
+    transform: translateY(-2px);
+  }
+
+  .divider{
+    display:flex; align-items:center; justify-content:center; gap: 14px;
+    margin: 40px auto 0; width: fit-content;
+  }
+  .divider .rule{ width: 56px; height:1px; background: var(--line); }
+  .divider .mark{ width:6px; height:6px; border: 1px solid var(--gold); transform: rotate(45deg); }
+
+  /* SECTION SPACING */
+  section{ padding: 60px 0; }
+  section + section{ border-top: 1px solid var(--line-soft); }
+
+  h2.section-title{ text-align:center; font-size: 30px; color: var(--cream); margin-bottom: 12px; }
+  .section-intro{
+    text-align:center; color: rgba(246,238,220,0.68);
+    max-width: 480px; margin: 0 auto 44px; font-size: 15px;
+  }
+
+  /* TICKETS */
+  .tickets{ display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 22px; }
+  @media (max-width: 860px){ .tickets{ grid-template-columns: 1fr; } }
+
+  .ticket{
+    border: 1px solid var(--line);
+    padding: 38px 28px;
+    text-align:center;
+    position: relative;
+    background: linear-gradient(180deg, rgba(255,46,154,0.06), transparent 45%);
+    transition: transform 0.25s ease, border-color 0.25s ease;
+  }
+  .ticket:hover{ transform: translateY(-4px); border-color: var(--gold); }
+  .ticket.featured{
+    border-color: var(--blue);
+    box-shadow: 0 0 0 1px var(--blue), 0 30px 70px -30px rgba(41,217,255,0.55);
+  }
+  .ticket.featured .ticket-tag{ color: var(--blue-light); border-color: var(--blue); }
+  .ticket.featured .ticket-name{ color: var(--blue-light); }
+  .ticket.featured .ticket-features svg{ stroke: var(--blue-light); }
+  .ticket.featured:hover{ border-color: var(--blue); }
+  @media (min-width: 861px){
+    .ticket.featured{ transform: scale(1.04); }
+    .ticket.featured:hover{ transform: scale(1.04) translateY(-4px); }
+  }
+  .ticket-tag{
+    position:absolute; top: -12px; left:50%; transform: translateX(-50%);
+    background: var(--ink); padding: 2px 14px; font-size: 11px;
+    letter-spacing: 0.12em; color: var(--gold-light); border: 1px solid var(--gold);
+  }
+  .ticket-name{ font-family:'Prata', serif; font-size: 24px; color: var(--gold-light); margin-bottom: 18px; }
+
+  .ticket-features{ list-style:none; margin-bottom: 24px; }
+  .ticket-features li{
+    display:flex; align-items:center; justify-content:center; gap: 8px;
+    font-size: 14px; color: rgba(246,238,220,0.78);
+    padding: 7px 0;
+  }
+  .ticket-features svg{ width: 16px; height:16px; stroke: var(--gold-light); fill:none; stroke-width: 1.6; flex-shrink:0; }
+
+  .ticket-price{ font-family:'Prata', serif; font-size: 44px; color: var(--cream); margin-bottom: 24px; }
+  .ticket-price span{ font-family:'Work Sans', sans-serif; font-size: 13px; color: rgba(246,238,220,0.5); font-weight: 300; }
+
+  .btn{
+    display:inline-block; width: 100%; padding: 15px 20px;
+    border: 1px solid var(--gold); color: var(--ink);
+    background: linear-gradient(90deg, var(--gold-light), var(--blue-light));
+    font-family: 'Work Sans', sans-serif; font-weight: 500;
+    font-size: 14px; letter-spacing: 0.04em; text-decoration:none;
+    transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+  }
+  .btn:hover{ box-shadow: 0 0 20px rgba(255,46,154,0.4), 0 0 20px rgba(41,217,255,0.35); transform: translateY(-1px); }
+
+  /* INFO */
+  .info-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 30px; text-align:center; }
+  @media (max-width: 620px){ .info-grid{ grid-template-columns: 1fr; gap: 36px; } }
+  .info-label{ font-size: 11px; letter-spacing: 0.12em; color: var(--gold-light); margin-bottom: 10px; }
+  .info-value{ font-size: 16px; color: var(--cream); }
+  .info-sub{ font-size: 13px; color: rgba(246,238,220,0.55); margin-top: 4px; }
+
+  footer{ padding: 48px 0 100px; text-align:center; font-size: 13px; color: rgba(246,238,220,0.4); }
+
+  /* REMAINING TICKETS */
+  .remaining{
+    max-width: 420px;
+    margin: 0 auto 44px;
+    text-align:center;
+  }
+  .remaining-count{
+    font-size: 14px;
+    color: var(--gold-light);
+    letter-spacing: 0.04em;
+    margin-bottom: 10px;
+  }
+  .remaining-count strong{ font-family:'Prata', serif; font-size: 18px; color: var(--cream); }
+  .remaining-bar{
+    height: 6px;
+    background: rgba(246,238,220,0.1);
+    border: 1px solid var(--line-soft);
+    overflow: hidden;
+  }
+  .remaining-bar-fill{
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--blue));
+    transition: width 0.6s ease;
+  }
+
+  /* SOCIAL */
+  .social{
+    display:flex;
+    justify-content:center;
+    gap: 18px;
+    margin-top: 8px;
+  }
+  .social a{
+    width: 46px; height: 46px;
+    display:flex; align-items:center; justify-content:center;
+    border: 1px solid var(--line);
+    color: var(--gold-light);
+    text-decoration:none;
+    transition: border-color 0.25s ease, background 0.25s ease;
+  }
+  .social a:hover{ border-color: var(--gold); background: rgba(255,46,154,0.08); }
+  .social svg{ width: 20px; height: 20px; stroke: currentColor; fill:none; stroke-width: 1.5; }
+  .social-note{
+    margin-top: 14px;
+    font-size: 12px;
+    color: rgba(246,238,220,0.4);
+  }
+
+  /* ACTION BUTTONS */
+  .action-grid{
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  @media (max-width: 700px){
+    .action-grid{ grid-template-columns: 1fr 1fr; }
+  }
+  .action-card{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap: 12px;
+    text-align:center;
+    border: 1px solid var(--line);
+    padding: 26px 16px;
+    text-decoration:none;
+    color: var(--cream);
+    background: linear-gradient(180deg, rgba(255,46,154,0.05), transparent 50%);
+    transition: transform 0.25s ease, border-color 0.25s ease;
+    cursor: pointer;
+  }
+  .action-card:hover{ transform: translateY(-4px); border-color: var(--gold); }
+  .action-card.disabled{ cursor: default; opacity: 0.65; }
+  .action-card.disabled:hover{ transform:none; border-color: var(--line); }
+  .action-card svg{ width: 26px; height: 26px; stroke: var(--gold-light); fill:none; stroke-width: 1.5; }
+  .action-title{ font-size: 13.5px; font-weight: 500; letter-spacing: 0.02em; }
+  .action-sub{ font-size: 11px; color: rgba(246,238,220,0.5); letter-spacing: 0.04em; }
+
+  /* CAJITAS SORPRESA */
+  .surprise-grid{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+  @media (max-width: 700px){
+    .surprise-grid{ grid-template-columns: 1fr 1fr; }
+  }
+
+  .surprise-box{
+    border: 1px solid var(--line);
+    padding: 26px 18px;
+    text-align:center;
+    background: linear-gradient(180deg, rgba(255,46,154,0.05), transparent 55%);
+    transition: border-color 0.3s ease, transform 0.3s ease;
+  }
+  .surprise-box svg{ width: 34px; height:34px; stroke: var(--gold-light); fill:none; stroke-width: 1.4; margin-bottom: 10px; }
+  .surprise-title{ font-family:'Prata', serif; font-size: 15px; color: var(--cream); margin-bottom: 10px; }
+  .surprise-countdown{
+    display:flex;
+    justify-content:center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .surprise-unit{ text-align:center; min-width: 34px; }
+  .surprise-num{ font-family:'Prata', serif; font-size: 19px; color: var(--gold-light); }
+  .surprise-label{ font-size: 8.5px; letter-spacing: 0.1em; color: rgba(246,238,220,0.45); }
+  .surprise-sub{ font-size: 11px; color: rgba(246,238,220,0.45); margin-top: 8px; }
+  .remind-btn{
+    display:inline-flex;
+    align-items:center;
+    gap: 6px;
+    margin-top: 14px;
+    padding: 8px 14px;
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--gold-light);
+    font-family: 'Work Sans', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    transition: border-color 0.25s ease, background 0.25s ease;
+  }
+  .remind-btn svg{ width: 13px; height:13px; stroke: var(--gold-light); fill:none; stroke-width: 1.6; margin:0; }
+  .remind-btn:hover{ border-color: var(--gold); background: rgba(255,46,154,0.08); }
+
+  .surprise-box.revealed{
+    border-color: var(--blue);
+    transform: translateY(-2px);
+  }
+  .surprise-box.revealed svg{ stroke: var(--blue-light); }
+  .surprise-content{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap: 8px;
+  }
+  .surprise-content .play-icon{
+    width: 44px; height:44px;
+    border: 1px solid var(--blue);
+    border-radius: 50%;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .surprise-content .play-icon svg{ width:16px; height:16px; margin:0; stroke: var(--blue-light); }
+  .surprise-content .surprise-ready{ font-size: 12px; color: var(--blue-light); letter-spacing: 0.04em; }
+
+  .sticky-cta{
+    position: fixed; left:0; right:0; bottom:0; z-index: 5;
+    display:none;
+    padding: 14px 20px calc(14px + env(safe-area-inset-bottom));
+    background: rgba(8,6,15,0.85);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid var(--line);
+  }
+  .sticky-cta a{
+    display:block; text-align:center; padding: 13px;
+    background: linear-gradient(90deg, var(--gold-light), var(--blue-light));
+    color:#180620; font-weight:600; letter-spacing:0.04em; font-size:14px;
+    text-decoration:none;
+  }
+  @media (max-width: 640px){ .sticky-cta{ display:block; } body{ padding-bottom: 76px; } }
+</style>
+</head>
+<body>
+
+  <div class="glow gold"></div>
+  <div class="glow violet"></div>
+  <div id="sparkles"></div>
+
+  <header>
+    <div class="wrap">
+      <div class="badge"><span class="dot"></span>AFORO LIMITADO · 250 PERSONAS</div>
+
+      <h1 class="title display">GOLDEN<span class="sub">NIGHT</span></h1>
+
+      <p class="subtitle">Recibimos el <strong>2026</strong> en <strong>Bella Ciao</strong>, Burgos</p>
+      <p class="meta-line">31 de diciembre · 1:00h, justo después de las campanadas</p>
+
+      <div class="genres">
+        <span class="genre-chip">REGUETÓN</span>
+        <span class="genre-chip">DEMBOW</span>
+        <span class="genre-chip">PERREO</span>
+      </div>
+
+      <div class="countdown" id="countdown">
+        <div class="count-unit"><div class="count-num" id="cd-days">–</div><div class="count-label">DÍAS</div></div>
+        <div class="count-unit"><div class="count-num" id="cd-hours">–</div><div class="count-label">HORAS</div></div>
+        <div class="count-unit"><div class="count-num" id="cd-mins">–</div><div class="count-label">MIN</div></div>
+        <div class="count-unit"><div class="count-num" id="cd-secs">–</div><div class="count-label">SEG</div></div>
+      </div>
+
+      <div class="hero-cta"><a href="#entradas">Ver entradas</a></div>
+
+      <div class="divider"><div class="rule"></div><div class="mark"></div><div class="rule"></div></div>
+    </div>
+  </header>
+
+  <section id="entradas">
+    <div class="wrap wide">
+      <h2 class="section-title display">Entradas</h2>
+      <p class="section-intro">Sin cupos reservados por tipo: se venden por orden de llegada hasta agotar el aforo total.</p>
+
+      <div class="remaining">
+        <div class="remaining-count"><strong id="remaining-num">—</strong> entradas restantes de 250</div>
+        <div class="remaining-bar"><div class="remaining-bar-fill" id="remaining-fill" style="width:0%"></div></div>
+      </div>
+
+      <div class="tickets">
+        <div class="ticket">
+          <div class="ticket-name">Bronce</div>
+          <ul class="ticket-features">
+            <li><svg viewBox="0 0 24 24"><path d="M6 3h5l-1 8a3 3 0 0 1-6 0z"/><path d="M8.5 14v7"/><path d="M5 21h7"/></svg>3 cubatas</li>
+            <li><svg viewBox="0 0 24 24"><path d="M6 3h5l-1 8a3 3 0 0 1-6 0z"/><path d="M8.5 14v7"/><path d="M5 21h7"/></svg>2 chupitos</li>
+          </ul>
+          <div class="ticket-price">45€</div>
+          <a class="btn" href="https://buy.stripe.com/REEMPLAZAR-BRONCE" target="_blank" rel="noopener">Reservar entrada</a>
+        </div>
+
+        <div class="ticket featured">
+          <div class="ticket-tag">MÁS ELEGIDA</div>
+          <div class="ticket-name">Plata</div>
+          <ul class="ticket-features">
+            <li><svg viewBox="0 0 24 24"><path d="M6 3h5l-1 8a3 3 0 0 1-6 0z"/><path d="M8.5 14v7"/><path d="M5 21h7"/></svg>4 cubatas</li>
+            <li><svg viewBox="0 0 24 24"><path d="M6 3h5l-1 8a3 3 0 0 1-6 0z"/><path d="M8.5 14v7"/><path d="M5 21h7"/></svg>2 chupitos</li>
+          </ul>
+          <div class="ticket-price">50€</div>
+          <a class="btn" href="https://buy.stripe.com/REEMPLAZAR-PLATA" target="_blank" rel="noopener">Reservar entrada</a>
+        </div>
+
+        <div class="ticket">
+          <div class="ticket-name">Golden</div>
+          <ul class="ticket-features">
+            <li><svg viewBox="0 0 24 24"><path d="M6 3h5l-1 8a3 3 0 0 1-6 0z"/><path d="M8.5 14v7"/><path d="M5 21h7"/></svg>5 cubatas</li>
+            <li><svg viewBox="0 0 24 24"><path d="M6 3h5l-1 8a3 3 0 0 1-6 0z"/><path d="M8.5 14v7"/><path d="M5 21h7"/></svg>2 chupitos</li>
+          </ul>
+          <div class="ticket-price">60€</div>
+          <a class="btn" href="https://buy.stripe.com/REEMPLAZAR-GOLDEN" target="_blank" rel="noopener">Reservar entrada</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="info">
+    <div class="wrap">
+      <h2 class="section-title display">Información</h2>
+      <div class="info-grid">
+        <div>
+          <div class="info-label">LUGAR</div>
+          <div class="info-value">Bella Ciao</div>
+          <div class="info-sub">Burgos capital</div>
+        </div>
+        <div>
+          <div class="info-label">FECHA</div>
+          <div class="info-value">31 de diciembre</div>
+          <div class="info-sub">Apertura 1:00h</div>
+        </div>
+        <div>
+          <div class="info-label">AFORO</div>
+          <div class="info-value">250 personas</div>
+          <div class="info-sub">Entradas limitadas</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="acciones">
+    <div class="wrap wide">
+      <h2 class="section-title display">Todo listo para la noche</h2>
+      <p class="section-intro">Guarda la fecha, llega sin perderte y avisa a tu grupo.</p>
+
+      <div class="action-grid">
+        <a class="action-card" href="https://www.google.com/maps/search/?api=1&query=Bella+Ciao+Burgos+Calle+Llana+de+Afuera+19" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>
+          <div class="action-title">Cómo llegar</div>
+          <div class="action-sub">Bella Ciao, Burgos</div>
+        </a>
+
+        <a class="action-card disabled" href="#" onclick="return false;">
+          <svg viewBox="0 0 24 24"><rect x="2" y="5" width="15" height="14" rx="2"/><path d="M17 10l5-3v10l-5-3"/></svg>
+          <div class="action-title">Vídeo del local</div>
+          <div class="action-sub">Próximamente</div>
+        </a>
+
+        <a class="action-card" href="#" id="add-calendar">
+          <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/></svg>
+          <div class="action-title">Añadir al calendario</div>
+          <div class="action-sub">31 dic · 1:00h</div>
+        </a>
+
+        <a class="action-card" href="#" id="share-btn">
+          <svg viewBox="0 0 24 24"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.2 10.8l7.6-4.6"/><path d="M8.2 13.2l7.6 4.6"/></svg>
+          <div class="action-title">Compartir</div>
+          <div class="action-sub">Avisa a tu grupo</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="sorpresas">
+    <div class="wrap wide">
+      <h2 class="section-title display">Sorpresas antes de la fiesta</h2>
+      <p class="section-intro">Cada cajita se abre sola cuando llega su día. Vuelve por aquí para ir descubriéndolas.</p>
+
+      <div class="surprise-grid" id="surprise-grid"></div>
+    </div>
+  </section>
+
+  <section id="social">
+    <div class="wrap">
+      <h2 class="section-title display">Síguenos</h2>
+      <div class="social">
+        <a href="#" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a href="#" target="_blank" rel="noopener" aria-label="TikTok">
+          <svg viewBox="0 0 24 24"><path d="M14 3v10.5a3.5 3.5 0 1 1-3.5-3.5"/><path d="M14 3a5 5 0 0 0 5 5"/></svg>
+        </a>
+        <a href="#" target="_blank" rel="noopener" aria-label="WhatsApp">
+          <svg viewBox="0 0 24 24"><path d="M3 21l1.6-4.8A8 8 0 1 1 8.6 19L3 21z"/><path d="M8.5 9.5c0 3 2.5 5.5 5.5 5.5"/></svg>
+        </a>
+      </div>
+      <p class="social-note">Cuentas en camino — enlaces listos para activar en cuanto estén creadas.</p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">Golden Night — Fiesta de Fin de Año · Bella Ciao, Burgos · #goldennight</div>
+  </footer>
+
+  <div class="sticky-cta"><a href="#entradas">Comprar entradas</a></div>
+
+<script>
+  const eventDate = new Date("2026-12-31T01:00:00");
+  function updateCountdown(){
+    const now = new Date();
+    let diff = eventDate - now;
+    if(diff < 0) diff = 0;
+    const days = Math.floor(diff / (1000*60*60*24));
+    const hours = Math.floor((diff / (1000*60*60)) % 24);
+    const mins = Math.floor((diff / (1000*60)) % 60);
+    const secs = Math.floor((diff / 1000) % 60);
+    document.getElementById('cd-days').textContent = days;
+    document.getElementById('cd-hours').textContent = String(hours).padStart(2,'0');
+    document.getElementById('cd-mins').textContent = String(mins).padStart(2,'0');
+    document.getElementById('cd-secs').textContent = String(secs).padStart(2,'0');
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
+  // ENTRADAS RESTANTES — edita "vendidas" a mano según vayan saliendo entradas
+  const aforoTotal = 250;
+  const vendidas = 0; // <-- cambia este número cuando vendas entradas
+  const restantes = Math.max(aforoTotal - vendidas, 0);
+  const porcentaje = Math.min((vendidas / aforoTotal) * 100, 100);
+  document.getElementById('remaining-num').textContent = restantes;
+  document.getElementById('remaining-fill').style.width = porcentaje + '%';
+
+  // AÑADIR AL CALENDARIO (.ics)
+  document.getElementById('add-calendar').addEventListener('click', function(e){
+    e.preventDefault();
+    const ics = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'BEGIN:VEVENT',
+      'SUMMARY:Golden Night - Fiesta de Fin de Año',
+      'LOCATION:Bella Ciao\\, Calle Llana de Afuera 19\\, Burgos',
+      'DESCRIPTION:Fiesta de fin de año Golden Night en Bella Ciao\\, Burgos.',
+      'DTSTART:20261231T010000',
+      'DTEND:20261231T060000',
+      'END:VEVENT',
+      'END:VCALENDAR'
+    ].join('\r\n');
+    const blob = new Blob([ics], { type: 'text/calendar' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'golden-night.ics';
+    link.click();
+  });
+
+  // COMPARTIR POR WHATSAPP
+  document.getElementById('share-btn').addEventListener('click', function(e){
+    e.preventDefault();
+    const texto = 'Golden Night - Fiesta de Fin de Año en Bella Ciao, Burgos. 31 de diciembre, justo después de las campanadas. Entradas aquí: ' + window.location.href;
+    window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank');
+  });
+
+  // CAJITAS SORPRESA
+  // FECHAS DE EJEMPLO — cámbialas por las fechas reales cuando las decidáis.
+  // Puedes añadir un "videoUrl" (enlace embed de YouTube, por ejemplo) a cualquier sorpresa
+  // y aparecerá automáticamente en cuanto se revele.
+  const surprises = [
+    { title: 'Misterio 1', revealDate: '2026-09-22T00:00:00', videoUrl: null },
+    { title: 'Misterio 2', revealDate: '2026-10-06T00:00:00', videoUrl: null },
+    { title: 'Misterio 3', revealDate: '2026-10-24T00:00:00', videoUrl: null },
+    { title: 'Misterio 4', revealDate: '2026-11-14T00:00:00', videoUrl: null },
+    { title: 'Misterio 5', revealDate: '2026-12-02T00:00:00', videoUrl: null },
+    { title: 'Misterio 6', revealDate: '2026-12-20T00:00:00', videoUrl: null }
+  ];
+
+  const surpriseGrid = document.getElementById('surprise-grid');
+  const boxIcon = '<svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="13" rx="1"/><path d="M3 8l9-5 9 5"/><path d="M12 3v18"/></svg>';
+  const playIcon = '<svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20"/></svg>';
+  const bellIcon = '<svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>';
+
+  function downloadReminder(title, dateISO){
+    const dt = dateISO.replace(/[-:]/g, '').split('.')[0];
+    const ics = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'BEGIN:VEVENT',
+      'SUMMARY:Golden Night — ' + title,
+      'DESCRIPTION:Se revela una nueva sorpresa de Golden Night.',
+      'DTSTART:' + dt,
+      'DTEND:' + dt,
+      'END:VEVENT',
+      'END:VCALENDAR'
+    ].join('\r\n');
+    const blob = new Blob([ics], { type: 'text/calendar' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = title.toLowerCase().replace(/\s+/g,'-') + '.ics';
+    link.click();
+  }
+
+  const boxEls = surprises.map(function(s){
+    const box = document.createElement('div');
+    box.className = 'surprise-box';
+    box.innerHTML =
+      boxIcon +
+      '<div class="surprise-title">' + s.title + '</div>' +
+      '<div class="surprise-countdown">' +
+        '<div class="surprise-unit"><div class="surprise-num sp-d">–</div><div class="surprise-label">DÍAS</div></div>' +
+        '<div class="surprise-unit"><div class="surprise-num sp-h">–</div><div class="surprise-label">HORAS</div></div>' +
+        '<div class="surprise-unit"><div class="surprise-num sp-m">–</div><div class="surprise-label">MIN</div></div>' +
+      '</div>' +
+      '<div class="surprise-sub">se revela pronto</div>' +
+      '<button class="remind-btn">' + bellIcon + ' Recordarme</button>';
+    surpriseGrid.appendChild(box);
+    box.querySelector('.remind-btn').addEventListener('click', function(){
+      downloadReminder(s.title, s.revealDate);
+    });
+    return box;
+  });
+
+  function revealBox(box, surprise){
+    box.classList.add('revealed');
+    if(surprise.videoUrl){
+      box.innerHTML =
+        '<div class="surprise-content">' +
+          '<div class="surprise-title">' + surprise.title + '</div>' +
+          '<iframe src="' + surprise.videoUrl + '" style="width:100%;aspect-ratio:16/9;border:0;" allowfullscreen></iframe>' +
+        '</div>';
+    } else {
+      box.innerHTML =
+        '<div class="surprise-content">' +
+          '<div class="play-icon">' + playIcon + '</div>' +
+          '<div class="surprise-title">' + surprise.title + '</div>' +
+          '<div class="surprise-ready">¡Revelada! Contenido próximamente</div>' +
+        '</div>';
+    }
+  }
+
+  function updateSurprises(){
+    const now = new Date();
+    surprises.forEach(function(s, i){
+      const box = boxEls[i];
+      const target = new Date(s.revealDate);
+      let diff = target - now;
+      if(diff <= 0){
+        if(!box.classList.contains('revealed')){ revealBox(box, s); }
+        return;
+      }
+      const d = Math.floor(diff / (1000*60*60*24));
+      const h = Math.floor((diff / (1000*60*60)) % 24);
+      const m = Math.floor((diff / (1000*60)) % 60);
+      box.querySelector('.sp-d').textContent = d;
+      box.querySelector('.sp-h').textContent = String(h).padStart(2,'0');
+      box.querySelector('.sp-m').textContent = String(m).padStart(2,'0');
+    });
+  }
+  updateSurprises();
+  setInterval(updateSurprises, 30000);
+
+  // sparkles
+  const container = document.getElementById('sparkles');
+  const n = 16;
+  for(let i=0;i<n;i++){
+    const s = document.createElement('div');
+    s.className = 'sparkle';
+    s.style.left = Math.random()*100 + 'vw';
+    s.style.bottom = (Math.random()*40) + 'vh';
+    s.style.animationDelay = (Math.random()*9) + 's';
+    s.style.animationDuration = (7 + Math.random()*6) + 's';
+    container.appendChild(s);
+  }
+</script>
+
+</body>
+</html>
