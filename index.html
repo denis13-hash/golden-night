@@ -4,6 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Golden Night — Fiesta de Fin de Año · Bella Ciao, Burgos</title>
+
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Golden Night — Fiesta de Fin de Año">
+<meta property="og:description" content="31 de diciembre · Bella Ciao, Burgos. Justo después de las campanadas. Reserva tu entrada.">
+<meta property="og:image" content="https://denis13-hash.github.io/golden-night/og-image.png">
+<meta property="og:url" content="https://denis13-hash.github.io/golden-night/">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Golden Night — Fiesta de Fin de Año">
+<meta name="twitter:description" content="31 de diciembre · Bella Ciao, Burgos. Justo después de las campanadas.">
+<meta name="twitter:image" content="https://denis13-hash.github.io/golden-night/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Prata&family=Work+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -403,6 +416,102 @@
   .remind-btn svg{ width: 13px; height:13px; stroke: var(--gold-light); fill:none; stroke-width: 1.6; margin:0; }
   .remind-btn:hover{ border-color: var(--gold); background: rgba(255,46,154,0.08); }
 
+  /* GENERADOR DE ENTRADA QR */
+  .qr-form{
+    max-width: 420px;
+    margin: 0 auto;
+    display:flex;
+    flex-direction:column;
+    gap: 14px;
+  }
+  .qr-form input, .qr-form select{
+    width: 100%;
+    padding: 13px 16px;
+    background: rgba(246,238,220,0.04);
+    border: 1px solid var(--line);
+    color: var(--cream);
+    font-family: 'Work Sans', sans-serif;
+    font-size: 14px;
+  }
+  .qr-form input::placeholder{ color: rgba(246,238,220,0.4); }
+  .qr-form input:focus, .qr-form select:focus{ outline: none; border-color: var(--gold); }
+  .qr-generate-btn{
+    padding: 15px 20px;
+    border: 1px solid var(--gold);
+    background: linear-gradient(90deg, var(--gold-light), var(--blue-light));
+    color: #180620;
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+  }
+  .qr-generate-btn:hover{ box-shadow: 0 0 20px rgba(255,46,154,0.4), 0 0 20px rgba(41,217,255,0.35); }
+  .qr-result{
+    max-width: 300px;
+    margin: 30px auto 0;
+    text-align:center;
+    display:none;
+  }
+  .qr-result.show{ display:block; }
+  .qr-box{
+    background: #fff;
+    padding: 16px;
+    display:inline-block;
+    border: 1px solid var(--gold);
+  }
+  .qr-ticket-name{ font-family:'Prata', serif; font-size: 18px; color: var(--gold-light); margin-top: 14px; }
+  .qr-ticket-meta{ font-size: 12px; color: rgba(246,238,220,0.6); margin-top: 4px; }
+  .qr-ticket-code{ font-size: 10.5px; letter-spacing: 0.1em; color: rgba(246,238,220,0.4); margin-top: 8px; }
+  .qr-note{
+    max-width: 460px;
+    margin: 24px auto 0;
+    text-align:center;
+    font-size: 12px;
+    color: rgba(246,238,220,0.45);
+    line-height: 1.6;
+  }
+
+  /* FAQ */
+  .faq-list{ max-width: 640px; margin: 0 auto; }
+  .faq-item{ border-bottom: 1px solid var(--line-soft); }
+  .faq-question{
+    width: 100%;
+    text-align:left;
+    background: none;
+    border: none;
+    color: var(--cream);
+    font-family: 'Work Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 18px 4px;
+    cursor: pointer;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap: 12px;
+  }
+  .faq-question .plus{
+    font-family:'Prata', serif;
+    font-size: 20px;
+    color: var(--gold-light);
+    transition: transform 0.25s ease;
+    flex-shrink:0;
+  }
+  .faq-item.open .plus{ transform: rotate(45deg); }
+  .faq-answer{
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+  }
+  .faq-item.open .faq-answer{ max-height: 200px; }
+  .faq-answer p{
+    padding: 0 4px 18px;
+    font-size: 13.5px;
+    color: rgba(246,238,220,0.65);
+    line-height: 1.6;
+  }
+
   .surprise-box.revealed{
     border-color: var(--blue);
     transform: translateY(-2px);
@@ -519,6 +628,33 @@
     </div>
   </section>
 
+  <section id="mi-entrada">
+    <div class="wrap">
+      <h2 class="section-title display">Genera tu entrada</h2>
+      <p class="section-intro">Después de pagar, rellena esto y te enviamos tu código QR por email — enséñalo en la puerta junto a tu confirmación de pago.</p>
+
+      <form class="qr-form" id="qr-form">
+        <input type="text" id="qr-name" placeholder="Tu nombre completo" required>
+        <input type="email" id="qr-email" placeholder="Tu email" required>
+        <select id="qr-type" required>
+          <option value="" disabled selected>Tipo de entrada</option>
+          <option value="Bronce — 45€">Bronce — 45€</option>
+          <option value="Plata — 50€">Plata — 50€</option>
+          <option value="Golden — 60€">Golden — 60€</option>
+        </select>
+        <button type="submit" class="qr-generate-btn" id="qr-submit-btn">Enviarme mi entrada por email</button>
+      </form>
+
+      <div class="qr-result" id="qr-result">
+        <div class="qr-ticket-name" id="qr-ticket-name">¡Entrada enviada!</div>
+        <div class="qr-ticket-meta" id="qr-ticket-meta">Revisa tu bandeja de entrada (y spam, por si acaso)</div>
+        <div class="qr-ticket-code" id="qr-ticket-code"></div>
+      </div>
+
+      <p class="qr-note">Este código no sustituye al pago — es solo para agilizar la entrada. En la puerta cotejamos el nombre con la lista de pagos recibidos, así que asegúrate de escribir tu nombre igual que al pagar. El código es de un solo uso.</p>
+    </div>
+  </section>
+
   <section id="info">
     <div class="wrap">
       <h2 class="section-title display">Información</h2>
@@ -539,6 +675,13 @@
           <div class="info-sub">Entradas limitadas</div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="wrap">
+      <h2 class="section-title display">Preguntas frecuentes</h2>
+      <div class="faq-list" id="faq-list"></div>
     </div>
   </section>
 
@@ -759,6 +902,71 @@
   }
   updateSurprises();
   setInterval(updateSurprises, 30000);
+
+  // GENERADOR DE ENTRADA QR (envío real por email vía Google Apps Script)
+  const TICKET_API_URL = 'https://script.google.com/macros/s/AKfycbxMoVpKwKCIK-KTrMdTYUg-LcpDNIuvAUqlUUAOAgUBeDYDtVMQR4XKUmdMfJrmQdKvkA/exec';
+
+  document.getElementById('qr-form').addEventListener('submit', function(e){
+    e.preventDefault();
+    const name = document.getElementById('qr-name').value.trim();
+    const email = document.getElementById('qr-email').value.trim();
+    const type = document.getElementById('qr-type').value;
+    if(!name || !email || !type) return;
+
+    const btn = document.getElementById('qr-submit-btn');
+    const originalText = btn.textContent;
+    btn.textContent = 'Enviando…';
+    btn.disabled = true;
+
+    fetch(TICKET_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'generar', name: name, email: email, ticketType: type })
+    })
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        btn.textContent = originalText;
+        btn.disabled = false;
+        if(data.success){
+          document.getElementById('qr-ticket-name').textContent = '¡Entrada enviada!';
+          document.getElementById('qr-ticket-meta').textContent = 'Revisa ' + email + ' (y la carpeta de spam, por si acaso)';
+          document.getElementById('qr-ticket-code').textContent = 'Código: ' + data.code;
+          document.getElementById('qr-result').classList.add('show');
+          document.getElementById('qr-result').scrollIntoView({ behavior: 'smooth', block: 'center' });
+          document.getElementById('qr-form').reset();
+        } else {
+          alert('No se pudo generar la entrada. Inténtalo de nuevo en unos segundos.');
+        }
+      })
+      .catch(function(){
+        btn.textContent = originalText;
+        btn.disabled = false;
+        alert('No se pudo conectar. Comprueba tu conexión e inténtalo de nuevo.');
+      });
+  });
+
+  // FAQ
+  const faqData = [
+    { q: '¿Cuál es la edad mínima para entrar?', a: 'La fiesta es para mayores de 18 años. Se puede pedir DNI en la puerta.' },
+    { q: '¿Hay código de vestimenta?', a: 'Elegante — "dress to impress". Si quieres sumarte al tema Golden Night, un toque dorado siempre viene bien.' },
+    { q: '¿Cómo demuestro que he pagado?', a: 'Genera tu entrada con código QR más arriba en esta misma página y enséñala en la puerta junto a tu nombre. Lo cotejamos con la lista de pagos recibidos.' },
+    { q: '¿Qué incluye cada tipo de entrada?', a: 'Bronce: 3 cubatas y 2 chupitos. Plata: 4 cubatas y 2 chupitos. Golden: 5 cubatas y 2 chupitos.' },
+    { q: '¿A qué hora abre la fiesta?', a: 'La puerta abre a la 1:00h del 31 de diciembre, justo después de las campanadas.' },
+    { q: '¿Hay límite de aforo?', a: 'Sí, 250 personas. Las entradas se venden por orden de llegada hasta agotar el aforo, sin cupos reservados por tipo.' }
+  ];
+
+  const faqList = document.getElementById('faq-list');
+  faqData.forEach(function(item){
+    const el = document.createElement('div');
+    el.className = 'faq-item';
+    el.innerHTML =
+      '<button class="faq-question">' + item.q + '<span class="plus">+</span></button>' +
+      '<div class="faq-answer"><p>' + item.a + '</p></div>';
+    el.querySelector('.faq-question').addEventListener('click', function(){
+      el.classList.toggle('open');
+    });
+    faqList.appendChild(el);
+  });
 
   // sparkles
   const container = document.getElementById('sparkles');
