@@ -151,13 +151,34 @@
 
   function startScanner(){
     html5QrCode = new Html5Qrcode('reader');
-    scanning = true;
-    html5QrCode.start(
-      { facingMode: 'environment' },
-      { fps: 10, qrbox: 240 },
-      onScanSuccess
-    );
-    document.getElementById('start-btn').style.display = 'none';
+
+    Html5Qrcode.getCameras().then(function(cameras){
+      let cameraId = { facingMode: 'environment' };
+      if(cameras && cameras.length){
+        const backCam = cameras.find(function(c){
+          return /back|rear|trasera|environment/i.test(c.label);
+        });
+        cameraId = backCam ? backCam.id : cameras[cameras.length - 1].id;
+      }
+
+      scanning = true;
+      html5QrCode.start(
+        cameraId,
+        { fps: 10, qrbox: { width: 250, height: 250 }, aspectRatio: 1.0 },
+        onScanSuccess
+      ).catch(function(){
+        // Si falla con el id concreto, probamos con facingMode como respaldo
+        html5QrCode.start(
+          { facingMode: 'environment' },
+          { fps: 10, qrbox: { width: 250, height: 250 } },
+          onScanSuccess
+        );
+      });
+
+      document.getElementById('start-btn').style.display = 'none';
+    }).catch(function(){
+      alert('No se pudo acceder a la cámara. Revisa que le hayas dado permiso en Ajustes → Safari → Cámara.');
+    });
   }
 
   function stopScanner(){
