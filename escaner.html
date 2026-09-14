@@ -170,6 +170,8 @@
         <button id="manual-submit">Comprobar</button>
       </div>
     </div>
+
+    <pre id="debug-log" style="margin-top:24px;padding:12px;background:rgba(246,238,220,0.05);border:1px solid rgba(246,238,220,0.15);color:rgba(246,238,220,0.6);font-size:11px;white-space:pre-wrap;word-break:break-all;max-height:200px;overflow:auto;"></pre>
   </div>
 
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
@@ -243,14 +245,24 @@
     verificar(decodedText.trim());
   }
 
+  function log(msg){
+    const el = document.getElementById('debug-log');
+    const time = new Date().toLocaleTimeString();
+    el.textContent += '[' + time + '] ' + msg + '\n';
+    el.scrollTop = el.scrollHeight;
+  }
+
   function jsonpRequest(url, onSuccess, onError){
     const callbackName = 'jsonpCallback_' + Date.now() + '_' + Math.floor(Math.random()*10000);
     const script = document.createElement('script');
     let finished = false;
 
+    log('Solicitando: ' + url);
+
     const timeout = setTimeout(function(){
       if(finished) return;
       finished = true;
+      log('TIMEOUT tras 25s sin respuesta');
       cleanup();
       onError();
     }, 25000);
@@ -264,6 +276,7 @@
     window[callbackName] = function(data){
       if(finished) return;
       finished = true;
+      log('Respuesta recibida: ' + JSON.stringify(data));
       cleanup();
       onSuccess(data);
     };
@@ -272,9 +285,11 @@
     script.onerror = function(){
       if(finished) return;
       finished = true;
+      log('ERROR: el script no cargó (onerror disparado)');
       cleanup();
       onError();
     };
+    log('Insertando script en la página…');
     document.body.appendChild(script);
   }
 
