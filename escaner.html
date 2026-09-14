@@ -206,7 +206,12 @@
       scanning = true;
       html5QrCode.start(
         cameraId,
-        { fps: 10, qrbox: { width: 250, height: 250 }, aspectRatio: 1.0 },
+        {
+          fps: 10,
+          qrbox: { width: 250, height: 250 },
+          aspectRatio: 1.0,
+          experimentalFeatures: { useBarCodeDetectorIfSupported: true }
+        },
         onScanSuccess
       ).catch(function(){
         // Si falla con el id concreto, probamos con facingMode como respaldo
@@ -248,7 +253,7 @@
       finished = true;
       cleanup();
       onError();
-    }, 15000);
+    }, 25000);
 
     function cleanup(){
       clearTimeout(timeout);
@@ -278,7 +283,7 @@
     jsonpRequest(url, function(data){
       showResult(data.valid, data);
     }, function(){
-      showResult(false, { reason: 'ERROR DE CONEXIÓN' });
+      showResult(false, { reason: 'ERROR DE CONEXIÓN', name: '', ticketType: 'Puede que sí se haya registrado — revisa la Google Sheet si tienes dudas antes de dejar pasar dos veces' });
     });
   }
 
@@ -298,7 +303,13 @@
     } else {
       verdictEl.style.color = '#FF8AD4';
       verdictEl.textContent = '❌ ' + (data.reason || 'NO VÁLIDA').toUpperCase();
-      detailEl.textContent = data.name ? (data.name + ' — ' + data.ticketType) : 'Código no reconocido';
+      if(data.name){
+        detailEl.textContent = data.name + ' — ' + data.ticketType;
+      } else if(data.ticketType){
+        detailEl.textContent = data.ticketType;
+      } else {
+        detailEl.textContent = 'Código no reconocido';
+      }
     }
     document.getElementById('scan-again').style.display = 'block';
   }
