@@ -433,8 +433,63 @@
     font-family: 'Work Sans', sans-serif;
     font-size: 14px;
   }
+  .qr-form select{
+    background: #1a0f28;
+    border: 2px solid var(--gold-light);
+    font-weight: 600;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FF8AD4' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 18px;
+    padding-right: 44px;
+  }
+  .qr-form select option{
+    background: #1a0f28;
+    color: var(--cream);
+    font-weight: 500;
+  }
   .qr-form input::placeholder{ color: rgba(246,238,220,0.4); }
   .qr-form input:focus, .qr-form select:focus{ outline: none; border-color: var(--gold); }
+
+  .payment-block{
+    border-top: 1px solid rgba(246,238,220,0.15);
+    border-bottom: 1px solid rgba(246,238,220,0.15);
+    padding: 18px 0;
+    margin: 6px 0;
+  }
+  .payment-label{
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--gold-light);
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  .payment-btn{
+    display:block;
+    width: 100%;
+    padding: 15px 20px;
+    text-align:center;
+    border: 1px solid var(--blue);
+    background: linear-gradient(90deg, var(--blue-light), var(--gold-light));
+    color: #180620;
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.02em;
+    text-decoration:none;
+    box-sizing: border-box;
+  }
+  .payment-btn:hover{ box-shadow: 0 0 20px rgba(41,217,255,0.4), 0 0 20px rgba(255,46,154,0.3); }
+  .payment-btn.disabled{
+    pointer-events:none;
+    opacity: 0.5;
+    background: rgba(246,238,220,0.08);
+    border-color: rgba(246,238,220,0.2);
+    color: rgba(246,238,220,0.5);
+  }
+
   .qr-generate-btn{
     padding: 15px 20px;
     border: 1px solid var(--gold);
@@ -601,7 +656,7 @@
             <li><svg viewBox="0 0 24 24"><path d="M6 3h5l-1 8a3 3 0 0 1-6 0z"/><path d="M8.5 14v7"/><path d="M5 21h7"/></svg>2 chupitos</li>
           </ul>
           <div class="ticket-price">42€</div>
-          <a class="btn" href="https://checkout.revolut.com/pay/cdd2f415-9f47-40e4-a869-7b6dd6792da2" target="_blank" rel="noopener">Reservar entrada</a>
+          <a class="btn" href="#mi-entrada" onclick="preselectTicket('Bronce — 42€')">Reservar entrada</a>
         </div>
 
         <div class="ticket featured">
@@ -612,7 +667,7 @@
             <li><svg viewBox="0 0 24 24"><path d="M6 3h5l-1 8a3 3 0 0 1-6 0z"/><path d="M8.5 14v7"/><path d="M5 21h7"/></svg>2 chupitos</li>
           </ul>
           <div class="ticket-price">50€</div>
-          <a class="btn" href="https://buy.stripe.com/REEMPLAZAR-PLATA" target="_blank" rel="noopener">Reservar entrada</a>
+          <a class="btn" href="#mi-entrada" onclick="preselectTicket('Plata — 50€')">Reservar entrada</a>
         </div>
 
         <div class="ticket">
@@ -622,7 +677,7 @@
             <li><svg viewBox="0 0 24 24"><path d="M6 3h5l-1 8a3 3 0 0 1-6 0z"/><path d="M8.5 14v7"/><path d="M5 21h7"/></svg>2 chupitos</li>
           </ul>
           <div class="ticket-price">60€</div>
-          <a class="btn" href="https://buy.stripe.com/REEMPLAZAR-GOLDEN" target="_blank" rel="noopener">Reservar entrada</a>
+          <a class="btn" href="#mi-entrada" onclick="preselectTicket('Golden — 60€')">Reservar entrada</a>
         </div>
       </div>
     </div>
@@ -630,19 +685,24 @@
 
   <section id="mi-entrada">
     <div class="wrap">
-      <h2 class="section-title display">Genera tu entrada</h2>
-      <p class="section-intro">Después de pagar, rellena esto y te enviamos tu código QR por email — enséñalo en la puerta junto a tu confirmación de pago.</p>
+      <h2 class="section-title display">Reserva tu entrada</h2>
+      <p class="section-intro">Pon tu nombre y email, elige tu entrada y paga — el código QR te llega solo al volver aquí.</p>
 
       <form class="qr-form" id="qr-form">
-        <input type="text" id="qr-name" placeholder="Tu nombre completo" required>
-        <input type="email" id="qr-email" placeholder="Tu email" required>
         <select id="qr-type" required>
           <option value="" disabled selected>Tipo de entrada</option>
           <option value="Bronce — 42€">Bronce — 42€</option>
           <option value="Plata — 50€">Plata — 50€</option>
           <option value="Golden — 60€">Golden — 60€</option>
         </select>
-        <button type="submit" class="qr-generate-btn" id="qr-submit-btn">Enviarme mi entrada por email</button>
+        <input type="text" id="qr-name" placeholder="Tu nombre completo" required>
+        <input type="email" id="qr-email" placeholder="Tu email" required>
+        <input type="tel" id="qr-phone" placeholder="Tu número de teléfono" required>
+
+        <div class="payment-block">
+          <div class="payment-label">Método de pago</div>
+          <a class="payment-btn" id="payment-btn" href="#" target="_blank" rel="noopener">Selecciona un tipo de entrada arriba</a>
+        </div>
       </form>
 
       <div class="qr-result" id="qr-result">
@@ -651,7 +711,7 @@
         <div class="qr-ticket-code" id="qr-ticket-code"></div>
       </div>
 
-      <p class="qr-note">Este código no sustituye al pago — es solo para agilizar la entrada. En la puerta cotejamos el nombre con la lista de pagos recibidos, así que asegúrate de escribir tu nombre igual que al pagar. El código es de un solo uso.</p>
+      <p class="qr-note">Al pulsar "Pagar" se abre el pago en una pestaña nueva. En cuanto vuelvas a esta pestaña, te enviamos automáticamente tu código QR — es de un solo uso y en la puerta cotejamos el nombre con la lista de pagos recibidos, así que asegúrate de escribir tu nombre igual que al pagar.</p>
     </div>
   </section>
 
@@ -906,6 +966,60 @@
   // GENERADOR DE ENTRADA QR (envío real por email vía Google Apps Script, con JSONP)
   const TICKET_API_URL = 'https://script.google.com/macros/s/AKfycbxMoVpKwKCIK-KTrMdTYUg-LcpDNIuvAUqlUUAOAgUBeDYDtVMQR4XKUmdMfJrmQdKvkA/exec';
 
+  // Enlaces de pago por tipo de entrada — añade aquí los de Plata y Golden cuando los tengas
+  const paymentLinks = {
+    'Bronce — 42€': 'https://checkout.revolut.com/pay/cdd2f415-9f47-40e4-a869-7b6dd6792da2',
+    'Plata — 50€': null,
+    'Golden — 60€': null
+  };
+
+  function updatePaymentButton(){
+    const type = document.getElementById('qr-type').value;
+    const btn = document.getElementById('payment-btn');
+    const url = paymentLinks[type];
+
+    if(!type){
+      btn.textContent = 'Selecciona un tipo de entrada arriba';
+      btn.href = '#';
+      btn.classList.add('disabled');
+    } else if(url){
+      btn.textContent = 'Pagar ' + type.split('—')[1].trim() + ' con Revolut';
+      btn.href = url;
+      btn.classList.remove('disabled');
+    } else {
+      btn.textContent = 'Método de pago aún no disponible para este tipo';
+      btn.href = '#';
+      btn.classList.add('disabled');
+    }
+  }
+
+  function preselectTicket(type){
+    document.getElementById('qr-type').value = type;
+    updatePaymentButton();
+  }
+
+  document.getElementById('qr-type').addEventListener('change', updatePaymentButton);
+  updatePaymentButton();
+
+  // Validar nombre, email y teléfono antes de dejar pasar al pago
+  document.getElementById('payment-btn').addEventListener('click', function(e){
+    const name = document.getElementById('qr-name').value.trim();
+    const email = document.getElementById('qr-email').value.trim();
+    const phone = document.getElementById('qr-phone').value.trim();
+    const type = document.getElementById('qr-type').value;
+
+    if(this.classList.contains('disabled')){
+      e.preventDefault();
+      return;
+    }
+    if(!type || !name || !email || !phone){
+      e.preventDefault();
+      alert('Rellena tu nombre, email y teléfono antes de pagar.');
+      return;
+    }
+    paymentPending = { name: name, email: email, phone: phone, type: type };
+  });
+
   function jsonpRequest(url, onSuccess, onError){
     const callbackName = 'jsonpCallback_' + Date.now() + '_' + Math.floor(Math.random()*10000);
     const script = document.createElement('script');
@@ -941,27 +1055,20 @@
     document.body.appendChild(script);
   }
 
-  document.getElementById('qr-form').addEventListener('submit', function(e){
-    e.preventDefault();
-    const name = document.getElementById('qr-name').value.trim();
-    const email = document.getElementById('qr-email').value.trim();
-    const type = document.getElementById('qr-type').value;
-    if(!name || !email || !type) return;
+  // Variable donde se guarda la entrada pendiente de pago
+  let paymentPending = null;
 
-    const btn = document.getElementById('qr-submit-btn');
-    const originalText = btn.textContent;
-    btn.textContent = 'Enviando…';
-    btn.disabled = true;
+  function enviarEntrada(name, email, phone, type){
+    document.getElementById('qr-result').classList.remove('show');
 
     const url = TICKET_API_URL +
       '?action=generar' +
       '&name=' + encodeURIComponent(name) +
       '&email=' + encodeURIComponent(email) +
+      '&phone=' + encodeURIComponent(phone) +
       '&ticketType=' + encodeURIComponent(type);
 
     jsonpRequest(url, function(data){
-      btn.textContent = originalText;
-      btn.disabled = false;
       if(data.success){
         document.getElementById('qr-ticket-name').textContent = '¡Entrada enviada!';
         document.getElementById('qr-ticket-meta').textContent = 'Revisa ' + email + ' (y la carpeta de spam, por si acaso)';
@@ -969,14 +1076,22 @@
         document.getElementById('qr-result').classList.add('show');
         document.getElementById('qr-result').scrollIntoView({ behavior: 'smooth', block: 'center' });
         document.getElementById('qr-form').reset();
+        updatePaymentButton();
       } else {
-        alert('No se pudo generar la entrada. Inténtalo de nuevo en unos segundos.');
+        alert('No se pudo generar la entrada. Escríbenos si el problema continúa.');
       }
     }, function(){
-      btn.textContent = originalText;
-      btn.disabled = false;
-      alert('No se pudo conectar. Comprueba tu conexión e inténtalo de nuevo.');
+      alert('No se pudo enviar la entrada automáticamente. Vuelve a intentarlo cambiando de tipo de entrada y seleccionándolo de nuevo.');
     });
+  }
+
+  // Al volver a esta pestaña después de pagar, se envía la entrada sola
+  window.addEventListener('focus', function(){
+    if(paymentPending){
+      const p = paymentPending;
+      paymentPending = null;
+      enviarEntrada(p.name, p.email, p.phone, p.type);
+    }
   });
 
   // FAQ
