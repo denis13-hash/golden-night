@@ -711,7 +711,7 @@
         <div class="qr-ticket-code" id="qr-ticket-code"></div>
       </div>
 
-      <p class="qr-note">Al pulsar "Pagar" se abre el pago en una pestaña nueva. En cuanto vuelvas a esta pestaña, te enviamos automáticamente tu código QR — es de un solo uso y en la puerta cotejamos el nombre con la lista de pagos recibidos, así que asegúrate de escribir tu nombre igual que al pagar.</p>
+      <p class="qr-note">Al pulsar "Pagar" se abre el pago en una pestaña nueva. Al volver a esta pestaña, esperamos 2 minutos y te enviamos tu código QR — es de un solo uso y en la puerta cotejamos el nombre con la lista de pagos recibidos, así que asegúrate de escribir tu nombre igual que al pagar.</p>
     </div>
   </section>
 
@@ -1085,12 +1085,21 @@
     });
   }
 
-  // Al volver a esta pestaña después de pagar, se envía la entrada sola
+  // Al volver a esta pestaña después de pagar, se espera 2 minutos y se envía la entrada
   window.addEventListener('focus', function(){
     if(paymentPending){
       const p = paymentPending;
       paymentPending = null;
-      enviarEntrada(p.name, p.email, p.phone, p.type);
+
+      document.getElementById('qr-ticket-name').textContent = 'Confirmando tu pago…';
+      document.getElementById('qr-ticket-meta').textContent = 'Tu entrada llegará por email en unos minutos, no cierres ni recargues la página.';
+      document.getElementById('qr-ticket-code').textContent = '';
+      document.getElementById('qr-result').classList.add('show');
+      document.getElementById('qr-result').scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      setTimeout(function(){
+        enviarEntrada(p.name, p.email, p.phone, p.type);
+      }, 120000);
     }
   });
 
