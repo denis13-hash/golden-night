@@ -1000,12 +1000,12 @@
     const script = document.createElement('script');
     let finished = false;
 
-    debugLog('Solicitando: ' + url);
+    debugLog('[JSONP] Solicitando: ' + url);
 
     const timeout = setTimeout(function(){
       if(finished) return;
       finished = true;
-      debugLog('TIMEOUT tras 25s sin respuesta');
+      debugLog('[JSONP] TIMEOUT tras 25s sin respuesta');
       cleanup();
       onError();
     }, 25000);
@@ -1019,7 +1019,7 @@
     window[callbackName] = function(data){
       if(finished) return;
       finished = true;
-      debugLog('Respuesta recibida: ' + JSON.stringify(data));
+      debugLog('[JSONP] Respuesta recibida: ' + JSON.stringify(data));
       cleanup();
       onSuccess(data);
     };
@@ -1028,12 +1028,26 @@
     script.onerror = function(){
       if(finished) return;
       finished = true;
-      debugLog('ERROR: el script no cargó (onerror disparado)');
+      debugLog('[JSONP] ERROR: el script no cargó (onerror disparado)');
       cleanup();
       onError();
     };
-    debugLog('Insertando script en la página…');
+    debugLog('[JSONP] Insertando script en la página…');
     document.body.appendChild(script);
+  }
+
+  function smartRequest(url, onSuccess, onError){
+    debugLog('[FETCH] Intentando fetch: ' + url);
+    fetch(url)
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        debugLog('[FETCH] Respuesta recibida: ' + JSON.stringify(data));
+        onSuccess(data);
+      })
+      .catch(function(err){
+        debugLog('[FETCH] Falló (' + err.message + '), probando con JSONP…');
+        jsonpRequest(url, onSuccess, onError);
+      });
   }
 
   // Variable donde se guarda la entrada pendiente de pago
@@ -1049,7 +1063,7 @@
       '&phone=' + encodeURIComponent(phone) +
       '&ticketType=' + encodeURIComponent(type);
 
-    jsonpRequest(url, function(data){
+    smartRequest(url, function(data){
       if(data.success){
         document.getElementById('qr-ticket-name').textContent = '¡Entrada enviada!';
         document.getElementById('qr-ticket-meta').textContent = 'Revisa ' + email + ' (y la carpeta de spam, por si acaso)';

@@ -257,12 +257,12 @@
     const script = document.createElement('script');
     let finished = false;
 
-    log('Solicitando: ' + url);
+    log('[JSONP] Solicitando: ' + url);
 
     const timeout = setTimeout(function(){
       if(finished) return;
       finished = true;
-      log('TIMEOUT tras 25s sin respuesta');
+      log('[JSONP] TIMEOUT tras 25s sin respuesta');
       cleanup();
       onError();
     }, 25000);
@@ -276,7 +276,7 @@
     window[callbackName] = function(data){
       if(finished) return;
       finished = true;
-      log('Respuesta recibida: ' + JSON.stringify(data));
+      log('[JSONP] Respuesta recibida: ' + JSON.stringify(data));
       cleanup();
       onSuccess(data);
     };
@@ -285,17 +285,31 @@
     script.onerror = function(){
       if(finished) return;
       finished = true;
-      log('ERROR: el script no cargó (onerror disparado)');
+      log('[JSONP] ERROR: el script no cargó (onerror disparado)');
       cleanup();
       onError();
     };
-    log('Insertando script en la página…');
+    log('[JSONP] Insertando script en la página…');
     document.body.appendChild(script);
+  }
+
+  function smartRequest(url, onSuccess, onError){
+    log('[FETCH] Intentando fetch: ' + url);
+    fetch(url)
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        log('[FETCH] Respuesta recibida: ' + JSON.stringify(data));
+        onSuccess(data);
+      })
+      .catch(function(err){
+        log('[FETCH] Falló (' + err.message + '), probando con JSONP…');
+        jsonpRequest(url, onSuccess, onError);
+      });
   }
 
   function verificar(code){
     const url = TICKET_API_URL + '?action=verificar&code=' + encodeURIComponent(code);
-    jsonpRequest(url, function(data){
+    smartRequest(url, function(data){
       showResult(data.valid, data);
     }, function(){
       showResult(false, { reason: 'ERROR DE CONEXIÓN', name: '', ticketType: 'Puede que sí se haya registrado — revisa la Google Sheet si tienes dudas antes de dejar pasar dos veces' });
