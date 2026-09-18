@@ -982,17 +982,33 @@
     paymentPending = { name: name, email: email, phone: phone, type: type };
   });
 
+  function debugLog(msg){
+    let el = document.getElementById('debug-log');
+    if(!el){
+      el = document.createElement('pre');
+      el.id = 'debug-log';
+      el.style.cssText = 'margin:24px auto 0;max-width:420px;padding:12px;background:rgba(246,238,220,0.05);border:1px solid rgba(246,238,220,0.15);color:rgba(246,238,220,0.6);font-size:11px;white-space:pre-wrap;word-break:break-all;max-height:200px;overflow:auto;';
+      document.getElementById('mi-entrada').querySelector('.wrap').appendChild(el);
+    }
+    const time = new Date().toLocaleTimeString();
+    el.textContent += '[' + time + '] ' + msg + '\n';
+    el.scrollTop = el.scrollHeight;
+  }
+
   function jsonpRequest(url, onSuccess, onError){
     const callbackName = 'jsonpCallback_' + Date.now() + '_' + Math.floor(Math.random()*10000);
     const script = document.createElement('script');
     let finished = false;
 
+    debugLog('Solicitando: ' + url);
+
     const timeout = setTimeout(function(){
       if(finished) return;
       finished = true;
+      debugLog('TIMEOUT tras 25s sin respuesta');
       cleanup();
       onError();
-    }, 15000);
+    }, 25000);
 
     function cleanup(){
       clearTimeout(timeout);
@@ -1003,6 +1019,7 @@
     window[callbackName] = function(data){
       if(finished) return;
       finished = true;
+      debugLog('Respuesta recibida: ' + JSON.stringify(data));
       cleanup();
       onSuccess(data);
     };
@@ -1011,9 +1028,11 @@
     script.onerror = function(){
       if(finished) return;
       finished = true;
+      debugLog('ERROR: el script no cargó (onerror disparado)');
       cleanup();
       onError();
     };
+    debugLog('Insertando script en la página…');
     document.body.appendChild(script);
   }
 
