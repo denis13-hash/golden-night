@@ -354,25 +354,89 @@
     .surprise-grid{ grid-template-columns: 1fr 1fr; }
   }
 
+  .surprise-grid{ grid-template-columns: repeat(4, 1fr); }
+  @media (max-width: 860px){ .surprise-grid{ grid-template-columns: 1fr 1fr; } }
+
   .surprise-box{
     border: 1px solid var(--line);
-    padding: 26px 18px;
+    border-radius: 18px;
+    padding: 30px 16px 24px;
     text-align:center;
-    background: linear-gradient(180deg, rgba(255,46,154,0.05), transparent 55%);
-    transition: border-color 0.3s ease, transform 0.3s ease;
+    background: linear-gradient(180deg, rgba(255,46,154,0.06), transparent 60%);
+    transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
   }
-  .surprise-box svg{ width: 34px; height:34px; stroke: var(--gold-light); fill:none; stroke-width: 1.4; margin-bottom: 10px; }
-  .surprise-title{ font-family:'Prata', serif; font-size: 15px; color: var(--cream); margin-bottom: 10px; }
+  .surprise-box:hover{
+    transform: translateY(-5px);
+    border-color: var(--gold);
+    box-shadow: 0 16px 40px -18px rgba(255,46,154,0.4);
+  }
+  .surprise-box::before{
+    content:'';
+    position:absolute; top:0; left:-60%;
+    width: 40%; height:100%;
+    background: linear-gradient(115deg, transparent, rgba(255,255,255,0.08), transparent);
+    transform: skewX(-18deg);
+    animation: surprise-shine 5s ease-in-out infinite;
+  }
+  @keyframes surprise-shine{
+    0%{ left:-60%; }
+    50%{ left:130%; }
+    100%{ left:130%; }
+  }
+
+  .mystery-ring{
+    width: 64px; height:64px;
+    margin: 0 auto 16px;
+    border-radius:50%;
+    border: 1.5px dashed rgba(255,46,154,0.5);
+    display:flex; align-items:center; justify-content:center;
+    position:relative;
+    animation: mystery-spin 10s linear infinite;
+  }
+  .mystery-ring::after{
+    content:'';
+    position:absolute; inset:-6px;
+    border-radius:50%;
+    border: 1px solid rgba(41,217,255,0.25);
+  }
+  .mystery-ring .qmark{
+    font-family:'Prata', serif;
+    font-size: 26px;
+    color: var(--gold-light);
+    animation: mystery-spin-reverse 10s linear infinite;
+    text-shadow: 0 0 16px rgba(255,46,154,0.5);
+  }
+  @keyframes mystery-spin{ to{ transform: rotate(360deg); } }
+  @keyframes mystery-spin-reverse{ to{ transform: rotate(-360deg); } }
+
+  .surprise-title{
+    font-family:'Prata', serif;
+    font-size: 16px;
+    letter-spacing: 0.03em;
+    color: var(--cream);
+    margin-bottom: 14px;
+    position:relative; z-index:1;
+  }
   .surprise-countdown{
     display:flex;
     justify-content:center;
-    gap: 8px;
-    margin-bottom: 4px;
+    gap: 7px;
+    margin-bottom: 8px;
+    position:relative; z-index:1;
   }
-  .surprise-unit{ text-align:center; min-width: 34px; }
-  .surprise-num{ font-family:'Prata', serif; font-size: 19px; color: var(--gold-light); }
-  .surprise-label{ font-size: 8.5px; letter-spacing: 0.1em; color: rgba(246,238,220,0.45); }
-  .surprise-sub{ font-size: 11px; color: rgba(246,238,220,0.45); margin-top: 8px; }
+  .surprise-unit{
+    text-align:center;
+    min-width: 42px;
+    background: rgba(255,46,154,0.05);
+    border: 1px solid var(--line-soft);
+    border-radius: 8px;
+    padding: 7px 4px 6px;
+  }
+  .surprise-num{ font-family:'Prata', serif; font-size: 18px; color: var(--gold-light); display:block; }
+  .surprise-label{ font-size: 7.5px; letter-spacing: 0.1em; color: rgba(246,238,220,0.45); }
+  .surprise-sub{ font-size: 11px; color: rgba(246,238,220,0.45); margin-top: 10px; position:relative; z-index:1; }
   .remind-btn{
     display:inline-flex;
     align-items:center;
@@ -682,10 +746,6 @@
           <div class="quicknav-circle"><svg viewBox="0 0 24 24"><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4V8z"/></svg></div>
           <div class="qn-label">ENTRADAS</div>
         </a>
-        <button class="quicknav-item" id="qn-share" type="button">
-          <div class="quicknav-circle"><svg viewBox="0 0 24 24"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.2 10.8l7.6-4.6"/><path d="M8.2 13.2l7.6 4.6"/></svg></div>
-          <div class="qn-label">COMPARTIR</div>
-        </button>
         <a class="quicknav-item" href="#social">
           <div class="quicknav-circle"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none"/></svg></div>
           <div class="qn-label">REDES</div>
@@ -939,52 +999,19 @@
     window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank');
   });
 
-  // COMPARTIR NATIVO (incluye "Añadir a tu historia" en Instagram, si el móvil lo soporta)
-  document.getElementById('qn-share').addEventListener('click', async function(){
-    const shareText = 'Golden Night — Fiesta de Fin de Año en Bella Ciao, Burgos. 31 de diciembre, justo después de las campanadas.';
-    const shareUrl = window.location.href;
-
-    try {
-      const resp = await fetch('share-card.jpg');
-      const blob = await resp.blob();
-      const file = new File([blob], 'golden-night.jpg', { type: 'image/jpeg' });
-
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({ files: [file], title: 'Golden Night', text: shareText, url: shareUrl });
-        return;
-      }
-    } catch(e){ /* seguimos con los siguientes intentos */ }
-
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: 'Golden Night', text: shareText, url: shareUrl });
-        return;
-      } catch(e){ /* el usuario canceló o falló, probamos el último recurso */ }
-    }
-
-    try {
-      await navigator.clipboard.writeText(shareUrl);
-      alert('Este navegador no permite compartir directamente — copiamos el enlace, pégalo donde quieras.');
-    } catch(e){
-      alert('Copia el enlace desde la barra de direcciones para compartirlo.');
-    }
-  });
-
   // CAJITAS SORPRESA
   // FECHAS DE EJEMPLO — cámbialas por las fechas reales cuando las decidáis.
   // Puedes añadir un "videoUrl" (enlace embed de YouTube, por ejemplo) a cualquier sorpresa
   // y aparecerá automáticamente en cuanto se revele.
   const surprises = [
-    { title: 'Misterio 1', revealDate: '2026-09-22T00:00:00', videoUrl: null },
-    { title: 'Misterio 2', revealDate: '2026-10-06T00:00:00', videoUrl: null },
-    { title: 'Misterio 3', revealDate: '2026-10-24T00:00:00', videoUrl: null },
-    { title: 'Misterio 4', revealDate: '2026-11-14T00:00:00', videoUrl: null },
-    { title: 'Misterio 5', revealDate: '2026-12-02T00:00:00', videoUrl: null },
-    { title: 'Misterio 6', revealDate: '2026-12-20T00:00:00', videoUrl: null }
+    { title: 'Misterio 1', revealDate: '2026-10-07T00:00:00', videoUrl: null },
+    { title: 'Misterio 2', revealDate: '2026-11-01T00:00:00', videoUrl: null },
+    { title: 'Misterio 3', revealDate: '2026-11-25T00:00:00', videoUrl: null },
+    { title: 'Misterio 4', revealDate: '2026-12-15T00:00:00', videoUrl: null }
   ];
 
   const surpriseGrid = document.getElementById('surprise-grid');
-  const boxIcon = '<svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="13" rx="1"/><path d="M3 8l9-5 9 5"/><path d="M12 3v18"/></svg>';
+  const boxIcon = '<div class="mystery-ring"><span class="qmark">?</span></div>';
   const playIcon = '<svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20"/></svg>';
   const bellIcon = '<svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>';
 
