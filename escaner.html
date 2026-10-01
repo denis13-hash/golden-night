@@ -176,18 +176,24 @@
 
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script>
-  // ⚠️ Cambia esta contraseña por la que quieras usar en la puerta
-  const DOOR_PASSWORD = 'BLGNRD26';
+  // La contraseña ya NO está en la página: la comprueba el servidor (DOOR_KEY en Apps Script)
   const TICKET_API_URL = 'https://script.google.com/macros/s/AKfycbwqCiy3NVIfCGasGLzsRDy91dTwyBOQEiBRzp7FjNSC0B5m8YPVP-IJlZwnITvvAlcGwA/exec';
+  let doorKey = '';
 
   document.getElementById('gate-submit').addEventListener('click', function(){
     const val = document.getElementById('gate-password').value;
-    if(val === DOOR_PASSWORD){
-      document.getElementById('gate').style.display = 'none';
-      document.getElementById('scanner-app').style.display = 'block';
-    } else {
-      document.getElementById('gate-error').textContent = 'Contraseña incorrecta';
-    }
+    document.getElementById('gate-error').textContent = 'Comprobando…';
+    smartRequest(TICKET_API_URL + '?action=login&key=' + encodeURIComponent(val), function(data){
+      if(data && data.ok){
+        doorKey = val;
+        document.getElementById('gate').style.display = 'none';
+        document.getElementById('scanner-app').style.display = 'block';
+      } else {
+        document.getElementById('gate-error').textContent = 'Contraseña incorrecta';
+      }
+    }, function(){
+      document.getElementById('gate-error').textContent = 'Sin conexión, inténtalo de nuevo';
+    });
   });
 
   let html5QrCode;
@@ -308,7 +314,7 @@
   }
 
   function verificar(code){
-    const url = TICKET_API_URL + '?action=verificar&code=' + encodeURIComponent(code);
+    const url = TICKET_API_URL + '?action=verificar&code=' + encodeURIComponent(code) + '&key=' + encodeURIComponent(doorKey);
     smartRequest(url, function(data){
       showResult(data.valid, data);
     }, function(){

@@ -614,6 +614,7 @@
     letter-spacing: 0.02em;
     text-decoration:none;
     box-sizing: border-box;
+    cursor: pointer;
   }
   .payment-btn:hover{ box-shadow: 0 0 20px rgba(41,217,255,0.4), 0 0 20px rgba(255,46,154,0.3); }
   .payment-btn.disabled{
@@ -838,7 +839,7 @@
   <section id="mi-entrada">
     <div class="wrap">
       <h2 class="section-title display">Reserva tu entrada</h2>
-      <p class="section-intro">Pon tu nombre y email, elige tu entrada y paga — el código QR te llega solo al volver aquí.</p>
+      <p class="section-intro">Elige tu entrada, pon tus datos y paga con Revolut. En cuanto confirmemos tu pago te llega tu código QR por email.</p>
 
       <form class="qr-form" id="qr-form">
         <select id="qr-type" required>
@@ -853,7 +854,7 @@
 
         <div class="payment-block">
           <div class="payment-label">Método de pago</div>
-          <a class="payment-btn" id="payment-btn" href="#" target="_blank" rel="noopener">Selecciona un tipo de entrada arriba</a>
+          <button type="button" class="payment-btn" id="payment-btn">Selecciona un tipo de entrada arriba</button>
         </div>
       </form>
 
@@ -861,9 +862,10 @@
         <div class="qr-ticket-name" id="qr-ticket-name">¡Entrada enviada!</div>
         <div class="qr-ticket-meta" id="qr-ticket-meta">Revisa tu bandeja de entrada (y spam, por si acaso)</div>
         <div class="qr-ticket-code" id="qr-ticket-code"></div>
+        <a class="payment-btn" id="qr-pay-link" href="#" target="_blank" rel="noopener" style="display:none;margin-top:18px">Pagar con Revolut</a>
       </div>
 
-      <p class="qr-note">Al pulsar "Pagar" se abre el pago en una pestaña nueva. Al volver a esta pestaña, esperamos 2 minutos y te enviamos tu código QR — es de un solo uso y en la puerta cotejamos el nombre con la lista de pagos recibidos, así que asegúrate de escribir tu nombre igual que al pagar.</p>
+      <p class="qr-note">Primero guardamos tu reserva y después pagas en la página segura de Revolut. Cuando comprobamos el cobro te enviamos tu entrada con el código QR por email (normalmente en pocas horas). Es personal y de un solo uso, así que paga con el mismo nombre que has puesto aquí.</p>
     </div>
   </section>
 
@@ -1139,30 +1141,20 @@
   // GENERADOR DE ENTRADA QR (envío real por email vía Google Apps Script, con JSONP)
   const TICKET_API_URL = 'https://script.google.com/macros/s/AKfycbwqCiy3NVIfCGasGLzsRDy91dTwyBOQEiBRzp7FjNSC0B5m8YPVP-IJlZwnITvvAlcGwA/exec';
 
-  // Enlaces de pago por tipo de entrada — añade aquí los de Plata y Golden cuando los tengas
-  const paymentLinks = {
-    'Bronce — 42€': 'https://checkout.revolut.com/pay/cdd2f415-9f47-40e4-a869-7b6dd6792da2',
-    'Plata — 50€': 'https://checkout.revolut.com/pay/1b9d0df1-1b93-43b8-8a84-7156beec801b',
-    'Golden — 60€': 'https://checkout.revolut.com/pay/7eb36795-099f-44ce-90df-5267b4a59758'
-  };
+  // ===== RESERVA + PAGO CON REVOLUT =====
+  // 1) Se guarda la reserva en Google Sheets como "Pendiente"
+  // 2) Se muestra el enlace de pago de Revolut de esa entrada
+  // 3) Cuando el organizador confirma el cobro, el QR llega por email
 
   function updatePaymentButton(){
     const type = document.getElementById('qr-type').value;
     const btn = document.getElementById('payment-btn');
-    const url = paymentLinks[type];
-
     if(!type){
       btn.textContent = 'Selecciona un tipo de entrada arriba';
-      btn.href = '#';
       btn.classList.add('disabled');
-    } else if(url){
-      btn.textContent = 'Pagar ' + type.split('—')[1].trim() + ' con Revolut';
-      btn.href = url;
-      btn.classList.remove('disabled');
     } else {
-      btn.textContent = 'Método de pago aún no disponible para este tipo';
-      btn.href = '#';
-      btn.classList.add('disabled');
+      btn.textContent = 'Reservar y pagar ' + type.split('—')[1].trim();
+      btn.classList.remove('disabled');
     }
   }
 
@@ -1174,139 +1166,91 @@
   document.getElementById('qr-type').addEventListener('change', updatePaymentButton);
   updatePaymentButton();
 
-  // Validar nombre, email y teléfono antes de dejar pasar al pago
-  document.getElementById('payment-btn').addEventListener('click', function(e){
-    const name = document.getElementById('qr-name').value.trim();
-    const email = document.getElementById('qr-email').value.trim();
-    const phone = document.getElementById('qr-phone').value.trim();
-    const type = document.getElementById('qr-type').value;
-
-    if(this.classList.contains('disabled')){
-      e.preventDefault();
-      return;
-    }
-    if(!type || !name || !email || !phone){
-      e.preventDefault();
-      alert('Rellena tu nombre, email y teléfono antes de pagar.');
-      return;
-    }
-    paymentPending = { name: name, email: email, phone: phone, type: type };
-  });
-
-  function debugLog(msg){
-    let el = document.getElementById('debug-log');
-    if(!el){
-      el = document.createElement('pre');
-      el.id = 'debug-log';
-      el.style.cssText = 'margin:24px auto 0;max-width:420px;padding:12px;background:rgba(246,238,220,0.05);border:1px solid rgba(246,238,220,0.15);color:rgba(246,238,220,0.6);font-size:11px;white-space:pre-wrap;word-break:break-all;max-height:200px;overflow:auto;';
-      document.getElementById('mi-entrada').querySelector('.wrap').appendChild(el);
-    }
-    const time = new Date().toLocaleTimeString();
-    el.textContent += '[' + time + '] ' + msg + '\n';
-    el.scrollTop = el.scrollHeight;
-  }
-
   function jsonpRequest(url, onSuccess, onError){
     const callbackName = 'jsonpCallback_' + Date.now() + '_' + Math.floor(Math.random()*10000);
     const script = document.createElement('script');
     let finished = false;
-
-    debugLog('[JSONP] Solicitando: ' + url);
-
     const timeout = setTimeout(function(){
       if(finished) return;
-      finished = true;
-      debugLog('[JSONP] TIMEOUT tras 25s sin respuesta');
-      cleanup();
-      onError();
+      finished = true; cleanup(); onError();
     }, 25000);
-
     function cleanup(){
       clearTimeout(timeout);
       delete window[callbackName];
       if(script.parentNode) script.parentNode.removeChild(script);
     }
-
     window[callbackName] = function(data){
       if(finished) return;
-      finished = true;
-      debugLog('[JSONP] Respuesta recibida: ' + JSON.stringify(data));
-      cleanup();
-      onSuccess(data);
+      finished = true; cleanup(); onSuccess(data);
     };
-
     script.src = url + (url.indexOf('?') > -1 ? '&' : '?') + 'callback=' + callbackName;
     script.onerror = function(){
       if(finished) return;
-      finished = true;
-      debugLog('[JSONP] ERROR: el script no cargó (onerror disparado)');
-      cleanup();
-      onError();
+      finished = true; cleanup(); onError();
     };
-    debugLog('[JSONP] Insertando script en la página…');
     document.body.appendChild(script);
   }
 
   function smartRequest(url, onSuccess, onError){
-    debugLog('[FETCH] Intentando fetch: ' + url);
     fetch(url)
       .then(function(res){ return res.json(); })
-      .then(function(data){
-        debugLog('[FETCH] Respuesta recibida: ' + JSON.stringify(data));
-        onSuccess(data);
-      })
-      .catch(function(err){
-        debugLog('[FETCH] Falló (' + err.message + '), probando con JSONP…');
-        jsonpRequest(url, onSuccess, onError);
-      });
+      .then(onSuccess)
+      .catch(function(){ jsonpRequest(url, onSuccess, onError); });
   }
 
-  // Variable donde se guarda la entrada pendiente de pago
-  let paymentPending = null;
+  let reserving = false;
+  document.getElementById('payment-btn').addEventListener('click', function(e){
+    e.preventDefault();
+    if(this.classList.contains('disabled') || reserving) return;
 
-  function enviarEntrada(name, email, phone, type){
-    document.getElementById('qr-result').classList.remove('show');
+    const name = document.getElementById('qr-name').value.trim();
+    const email = document.getElementById('qr-email').value.trim();
+    const phone = document.getElementById('qr-phone').value.trim();
+    const type = document.getElementById('qr-type').value;
+
+    if(!type || !name || !email || !phone){
+      alert('Rellena tu nombre, email y teléfono antes de pagar.');
+      return;
+    }
+
+    const btn = this;
+    const oldText = btn.textContent;
+    reserving = true;
+    btn.textContent = 'Guardando tu reserva…';
+    btn.classList.add('disabled');
 
     const url = TICKET_API_URL +
-      '?action=generar' +
+      '?action=reservar' +
       '&name=' + encodeURIComponent(name) +
       '&email=' + encodeURIComponent(email) +
       '&phone=' + encodeURIComponent(phone) +
       '&ticketType=' + encodeURIComponent(type);
 
-    smartRequest(url, function(data){
-      if(data.success){
-        document.getElementById('qr-ticket-name').textContent = '¡Entrada enviada!';
-        document.getElementById('qr-ticket-meta').textContent = 'Revisa ' + email + ' (y la carpeta de spam, por si acaso)';
-        document.getElementById('qr-ticket-code').textContent = 'Código: ' + data.code;
-        document.getElementById('qr-result').classList.add('show');
-        document.getElementById('qr-result').scrollIntoView({ behavior: 'smooth', block: 'center' });
-        document.getElementById('qr-form').reset();
-        updatePaymentButton();
-      } else {
-        alert('No se pudo generar la entrada. Escríbenos si el problema continúa.');
-      }
-    }, function(){
-      alert('No se pudo enviar la entrada automáticamente. Vuelve a intentarlo cambiando de tipo de entrada y seleccionándolo de nuevo.');
-    });
-  }
-
-  // Al volver a esta pestaña después de pagar, se espera 2 minutos y se envía la entrada
-  window.addEventListener('focus', function(){
-    if(paymentPending){
-      const p = paymentPending;
-      paymentPending = null;
-
-      document.getElementById('qr-ticket-name').textContent = 'Confirmando tu pago…';
-      document.getElementById('qr-ticket-meta').textContent = 'Tu entrada llegará por email en unos minutos, no cierres ni recargues la página.';
-      document.getElementById('qr-ticket-code').textContent = '';
-      document.getElementById('qr-result').classList.add('show');
-      document.getElementById('qr-result').scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-      setTimeout(function(){
-        enviarEntrada(p.name, p.email, p.phone, p.type);
-      }, 120000);
+    function fail(msg){
+      reserving = false;
+      btn.textContent = oldText;
+      btn.classList.remove('disabled');
+      alert(msg || 'No se pudo guardar la reserva. Inténtalo de nuevo en un momento.');
     }
+
+    smartRequest(url, function(data){
+      if(!data || !data.ok || !data.payUrl){ fail(data && data.error); return; }
+
+      reserving = false;
+      document.getElementById('qr-form').style.display = 'none';
+      document.getElementById('qr-ticket-name').textContent = 'Reserva guardada ✔ · Paso 2: paga';
+      document.getElementById('qr-ticket-meta').textContent =
+        'Entrada ' + data.tipo + ' · ' + data.precio + '€. Paga con el botón de abajo usando el nombre "' + name +
+        '". En cuanto confirmemos tu pago te llega el QR a ' + email + ' (mira también en spam).';
+      document.getElementById('qr-ticket-code').textContent = 'Tu referencia: ' + data.ref;
+      const pay = document.getElementById('qr-pay-link');
+      pay.href = data.payUrl;
+      pay.textContent = 'Pagar ' + data.precio + '€ con Revolut';
+      pay.style.display = 'block';
+      const box = document.getElementById('qr-result');
+      box.classList.add('show');
+      box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, function(){ fail(); });
   });
 
   // FAQ
