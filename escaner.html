@@ -349,6 +349,14 @@
     document.getElementById('scan-again').style.display = 'block';
   }
 
+  // Pulsar Enter / "Ir" en el teclado del móvil también cuenta
+  document.getElementById('gate-password').addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){ e.preventDefault(); document.getElementById('gate-submit').click(); }
+  });
+  document.getElementById('manual-code').addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){ e.preventDefault(); document.getElementById('manual-submit').click(); }
+  });
+
   document.getElementById('start-btn').addEventListener('click', startScanner);
   document.getElementById('scan-again').addEventListener('click', function(){
     alreadyHandled = false;
