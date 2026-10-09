@@ -215,6 +215,9 @@ header.nav.solid{background:rgba(7,3,15,.96);border-color:rgba(255,46,170,.18)}
 .play-icon svg{width:22px;height:22px;fill:currentColor}
 @media (max-width:900px){.surprise-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.surprise-box{padding:22px 10px}.surprise-unit{min-width:0}.surprise-countdown{gap:6px}}
 
+.hint{font:400 26px/1 var(--f-mark);letter-spacing:.14em;color:var(--cyan-l);filter:blur(2.6px);opacity:.75;user-select:none;
+  text-shadow:0 0 10px var(--cyan);transform:skewX(-8deg);-webkit-mask-image:linear-gradient(90deg,#000 0 20%,transparent 30%,#000 42%,rgba(0,0,0,.35) 60%,#000 72%,transparent 85%,#000);
+  mask-image:linear-gradient(90deg,#000 0 20%,transparent 30%,#000 42%,rgba(0,0,0,.35) 60%,#000 72%,transparent 85%,#000)}
 /* faq */
 .faq details{border-bottom:1px solid rgba(247,238,254,.12)}
 .faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:20px;padding:22px 4px;font:600 17px/1.35 var(--f-sans)}
@@ -737,7 +740,7 @@ footer{border-top:1px solid rgba(255,46,170,.2);padding:56px 0 120px;background:
   function initSurprises(){
     // Fechas en las que se abre cada caja. Añade "videoUrl" (enlace de YouTube para insertar) cuando tengáis el contenido.
     var surprises = [
-      { title: 'Misterio 1', revealDate: '2026-10-07T00:00:00', videoUrl: null },
+      { title: 'Misterio 1', revealDate: '2026-10-12T18:00:00+02:00', videoUrl: null, hint: 'DJ ▒N▒ITA▒O' },
       { title: 'Misterio 2', revealDate: '2026-11-01T00:00:00', videoUrl: null },
       { title: 'Misterio 3', revealDate: '2026-11-25T00:00:00', videoUrl: null },
       { title: 'Misterio 4', revealDate: '2026-12-15T00:00:00', videoUrl: null }
@@ -761,7 +764,7 @@ footer{border-top:1px solid rgba(255,46,170,.2);padding:56px 0 120px;background:
         '<div class="surprise-countdown"><div class="surprise-unit"><div class="surprise-num sp-d">–</div><div class="surprise-label">DÍAS</div></div>' +
         '<div class="surprise-unit"><div class="surprise-num sp-h">–</div><div class="surprise-label">HORAS</div></div>' +
         '<div class="surprise-unit"><div class="surprise-num sp-m">–</div><div class="surprise-label">MIN</div></div></div>' +
-        '<div class="surprise-sub">se revela pronto</div><button class="remind-btn" type="button">' + bell + ' Recordarme</button>';
+        (s.hint ? '<div class="hint" aria-hidden="true">' + s.hint + '</div>' : '') + '<div class="surprise-sub">se revela pronto</div><button class="remind-btn" type="button">' + bell + ' Recordarme</button>';
       grid.appendChild(b);
       b.querySelector('.remind-btn').addEventListener('click', function(){ reminder(s.title, s.revealDate); });
       return b;
