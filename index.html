@@ -45,14 +45,13 @@ a{color:inherit}
 .wrap{width:min(1120px,100% - 40px);margin-inline:auto}
 .narrow{width:min(720px,100% - 40px);margin-inline:auto}
 
-/* ambient glow following cursor (signature) */
-.aura{position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:radial-gradient(600px circle at var(--mx,50%) var(--my,30%),rgba(255,46,170,.13),transparent 60%),
-             radial-gradient(800px circle at calc(100% - var(--mx,50%)) calc(100% - var(--my,30%)),rgba(41,217,255,.08),transparent 60%);
-  transition:background .2s linear}
 .grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.06;mix-blend-mode:overlay;
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
 main,header.nav,footer{position:relative;z-index:2}
+section[id]{scroll-margin-top:88px}
+::selection{background:var(--pink);color:#14051f}
+html{scrollbar-color:var(--pink) var(--bg);accent-color:var(--pink)}
+input,select,textarea{caret-color:var(--pink-l)}
 
 /* neon text */
 .neon-p{color:#fff;text-shadow:0 0 6px var(--pink-l),0 0 20px var(--pink),0 0 46px rgba(255,46,170,.7)}
@@ -99,13 +98,14 @@ header.nav.solid{background:rgba(7,3,15,.96);border-color:rgba(255,46,170,.18)}
 .hero-sub{font:600 clamp(17px,2.2vw,22px)/1.45 var(--f-sans);max-width:680px;margin:18px auto 0;color:#fff;text-shadow:0 2px 18px rgba(0,0,0,.8)}
 .hero-sub b{color:var(--pink-l)}
 .chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:22px}
-.chip{padding:8px 14px;border-radius:999px;border:1px solid rgba(247,238,254,.25);background:rgba(7,3,15,.5);font:700 11.5px/1 var(--f-sans);letter-spacing:.2em;color:var(--mute)}
+@media (max-width:420px){.chips{display:grid;grid-template-columns:repeat(2,auto)}}
+.chip{padding:8px 14px;border-radius:999px;border:1px solid rgba(247,238,254,.25);background:rgba(7,3,15,.5);font:700 12.5px/1 var(--f-sans);letter-spacing:.18em;color:var(--mute)}
 .countdown{display:flex;gap:12px;justify-content:center;margin-top:36px}
 .cd{min-width:84px;padding:14px 10px 12px;border-radius:16px;background:rgba(7,3,15,.75);border:1px solid var(--line)}
 .cd b{display:block;font:800 clamp(28px,4vw,40px)/1 var(--f-serif);color:#fff}
-.cd small{display:block;margin-top:6px;font:700 10px/1 var(--f-sans);letter-spacing:.24em;color:var(--dim)}
+.cd small{display:block;margin-top:6px;font:700 11.5px/1 var(--f-sans);letter-spacing:.24em;color:var(--dim)}
 .hero-ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:36px}
-.scroll-hint{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);font:700 10px/1 var(--f-sans);letter-spacing:.3em;color:var(--dim)}
+.scroll-hint{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);font:700 11.5px/1 var(--f-sans);letter-spacing:.3em;color:var(--dim)}
 @media (max-width:520px){.cd{min-width:68px}.countdown{gap:8px}}
 
 /* marquee */
@@ -174,12 +174,12 @@ header.nav.solid{background:rgba(7,3,15,.96);border-color:rgba(255,46,170,.18)}
 /* booking form (ids kept for the payment script) */
 .book{padding:44px;border-radius:28px;background:linear-gradient(180deg,rgba(22,10,44,.92),rgba(12,6,26,.92));border:1.5px solid var(--line);box-shadow:0 0 60px rgba(255,46,170,.12)}
 .qr-form{display:grid;gap:14px}
-.field label{display:block;font:700 11.5px/1 var(--f-sans);letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+.field label{display:block;font:700 12.5px/1 var(--f-sans);letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
 .qr-form input,.qr-form select{width:100%;padding:16px 18px;border-radius:14px;border:1.5px solid rgba(247,238,254,.16);background:rgba(7,3,15,.7);
   color:var(--ink);font:500 16px/1.2 var(--f-sans);appearance:none;-webkit-appearance:none}
 .qr-form select{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23ff8fe0' stroke-width='3'><path d='M6 9l6 6 6-6'/></svg>");background-repeat:no-repeat;background-position:right 18px center}
 .qr-form select option{background:#14081f;color:#fff}
-.qr-form input::placeholder{color:rgba(247,238,254,.38)}
+.qr-form input::placeholder{color:rgba(247,238,254,.62)}
 .qr-form input:focus,.qr-form select:focus{outline:none;border-color:var(--pink);box-shadow:0 0 0 4px rgba(255,46,170,.15)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media (max-width:620px){.row2{grid-template-columns:1fr}.book{padding:26px}}
@@ -197,6 +197,47 @@ header.nav.solid{background:rgba(7,3,15,.96);border-color:rgba(255,46,170,.18)}
 .trust{display:flex;flex-wrap:wrap;gap:10px 22px;justify-content:center;margin-top:18px;font:600 12.5px/1 var(--f-sans);color:var(--mute)}
 .trust span::before{content:'✓ ';color:var(--cyan-l)}
 
+/* validación y estados del formulario */
+.qr-form [aria-invalid="true"]{border-color:#ff6b8b;box-shadow:0 0 0 4px rgba(255,107,139,.14)}
+.field-err{margin-top:8px;font:600 14px/1.35 var(--f-sans);color:#ff9fb4}
+.field-err button{font:inherit;color:var(--cyan-l);background:none;border:0;padding:0;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.form-msg{padding:14px 18px;border-radius:14px;background:rgba(255,107,139,.1);border:1.5px solid rgba(255,107,139,.45);color:#ffd2dc;font:500 15px/1.45 var(--f-sans)}
+.form-msg a{color:var(--cyan-l);text-underline-offset:3px}
+.payment-btn[aria-busy="true"]{cursor:progress}
+.payment-btn[aria-busy="true"]::before{content:'';display:inline-block;width:14px;height:14px;margin-right:10px;vertical-align:-2px;border-radius:50%;
+  border:2px solid currentColor;border-right-color:transparent;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.payment-btn[aria-busy="true"]::before{animation:none}}
+
+/* después de reservar: pasos, referencia y ayuda */
+.qr-result{text-align:left}
+.qr-result .qr-ticket-name{text-align:center}
+.qr-result .qr-ticket-name:focus{outline:none}
+.qr-result .qr-ticket-meta{text-align:center}
+.pay-steps{list-style:none;margin:26px 0 0;padding:0;display:grid;gap:0}
+.pay-steps>li{position:relative;display:grid;grid-template-columns:34px 1fr;gap:14px;padding-bottom:18px}
+.pay-steps>li:not(:last-child)::after{content:'';position:absolute;left:16px;top:34px;bottom:2px;width:2px;background:rgba(247,238,254,.14)}
+.pay-steps .dot{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:800 14px/1 var(--f-sans);
+  border:2px solid rgba(247,238,254,.28);color:var(--mute);background:rgba(7,3,15,.7)}
+.pay-steps .dot svg{width:16px;height:16px}
+.pay-steps .done .dot{border-color:var(--cyan-l);color:var(--cyan-l)}
+.pay-steps .now .dot{border-color:var(--pink-l);color:#14051f;background:var(--pink-l);box-shadow:0 4px 18px rgba(255,46,170,.45)}
+.pay-steps b{display:block;font:800 16px/1.3 var(--f-sans);color:var(--ink)}
+.pay-steps .done b{color:var(--cyan-l)}
+.pay-steps>li>div>span{display:block;margin-top:4px;font:500 14.5px/1.45 var(--f-sans);color:var(--mute)}
+.pay-steps .now .payment-btn{margin-top:14px}
+.pay-facts{margin:12px 0 0;padding:0;list-style:none;display:grid;gap:6px;font:500 14px/1.45 var(--f-sans);color:var(--mute)}
+.pay-facts li::before{content:'';display:inline-block;width:6px;height:6px;margin-right:10px;border-radius:50%;background:var(--pink-l);vertical-align:2px}
+.ref-row{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:12px}
+.ref-row .qr-ticket-code{margin-top:0}
+.copy-btn{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 16px;border-radius:999px;cursor:pointer;
+  border:1.5px solid rgba(156,240,255,.5);background:rgba(41,217,255,.08);color:var(--cyan-l);font:700 13px/1 var(--f-sans);letter-spacing:.04em}
+.copy-btn svg{width:15px;height:15px}
+.copy-btn:hover{background:rgba(41,217,255,.16)}
+.pay-help{margin-top:8px;padding:16px 18px;border-radius:16px;background:rgba(247,238,254,.05);border:1.5px solid rgba(247,238,254,.12);
+  font:500 14.5px/1.5 var(--f-sans);color:var(--mute)}
+.pay-help a{color:var(--cyan-l);font-weight:700;text-underline-offset:3px}
+
 /* surprises (generated by script) */
 .surprise-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
 .surprise-box{padding:26px 18px;border-radius:var(--r);background:var(--card);border:1px solid var(--line);text-align:center;min-height:230px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
@@ -207,7 +248,9 @@ header.nav.solid{background:rgba(7,3,15,.96);border-color:rgba(255,46,170,.18)}
 .surprise-countdown{display:flex;gap:8px}
 .surprise-unit{min-width:46px}
 .surprise-num{font:800 22px/1 var(--f-serif)}
-.surprise-label{font:700 9px/1 var(--f-sans);letter-spacing:.2em;color:var(--dim);margin-top:4px}
+.surprise-link{display:block;color:inherit;text-decoration:none}
+.surprise-link:hover .surprise-ready{color:#fff;text-decoration:underline;text-underline-offset:3px}
+.surprise-label{font:700 11px/1 var(--f-sans);letter-spacing:.2em;color:var(--dim);margin-top:4px}
 .surprise-sub,.surprise-ready{font-size:13px;color:var(--mute)}
 .remind-btn{display:inline-flex;gap:6px;align-items:center;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--pink-l);font:700 12px/1 var(--f-sans);cursor:pointer}
 .remind-btn svg,.play-icon svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
@@ -258,7 +301,7 @@ footer{border-top:1px solid rgba(255,46,170,.2);padding:56px 0 120px;background:
   transform:translateY(140%);transition:transform .35s ease}
 .buybar.show{transform:none}
 .buybar span{font:700 13px/1.25 var(--f-sans)}
-.buybar span small{display:block;color:var(--dim);font-weight:600;font-size:11.5px}
+.buybar span small{display:block;color:var(--mute);font-weight:600;font-size:12.5px}
 .buybar .btn{padding:13px 20px;font-size:14px}
 @media (max-width:860px){.buybar{display:flex}}
 
@@ -267,51 +310,30 @@ footer{border-top:1px solid rgba(255,46,170,.2);padding:56px 0 120px;background:
 .js .reveal.in{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){
   .js .reveal{transition-duration:.3s}
-  .marquee-track{animation-duration:70s}
+  .marquee-track,.phone-tag .dot{animation:none}
 }
 
 /* ===== animated layer ===== */
-.sky{position:fixed;inset:-20%;z-index:0;pointer-events:none;opacity:.55;filter:blur(60px);
-  background:conic-gradient(from 0deg at 50% 50%,rgba(255,46,170,.35),rgba(41,217,255,.22),rgba(155,77,255,.3),rgba(255,46,170,.35));
-  animation:sky 38s linear infinite}
-@keyframes sky{to{transform:rotate(360deg)}}
 .sparks{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
 .sparks i{position:absolute;bottom:-10px;width:4px;height:4px;border-radius:50%;background:var(--pink-l);opacity:0;animation:rise linear infinite;will-change:transform,opacity}
 .sparks i:nth-child(3n){background:var(--cyan-l)}
 .sparks i:nth-child(4n){background:var(--gold)}
 @keyframes rise{0%{transform:translateY(0) scale(.6);opacity:0}10%{opacity:.9}100%{transform:translateY(-110vh) scale(1.1);opacity:0}}
-@keyframes kb{from{transform:scale(1.04)}to{transform:scale(1.16) translate(-1.5%,-1%)}}
-@keyframes flick{0%,18%,22%,25%,53%,57%,100%{opacity:1}20%,24%,55%{opacity:.55}}
 .tier.silver{border-color:transparent;background:linear-gradient(var(--bg-2),var(--bg-2)) padding-box,conic-gradient(from var(--ang,0deg),var(--cyan),var(--pink),var(--silver),var(--cyan)) border-box}
 @property --ang{syntax:'<angle>';inherits:false;initial-value:0deg}
-@keyframes spinb{to{--ang:360deg}}
-@keyframes shine{0%,100%{background-position:0 0}50%{background-position:100% 0}}
 /* phone with venue video */
 .phone{position:relative;display:flex;justify-content:center}
 .phone-glow{position:absolute;inset:8% 14%;border-radius:40px;background:radial-gradient(circle,rgba(255,46,170,.55),rgba(41,217,255,.25) 50%,transparent 70%);filter:blur(40px)}
-@keyframes pulse{50%{transform:scale(1.08);opacity:.75}}
 .phone-frame{position:relative;width:min(320px,80vw);aspect-ratio:9/16;border-radius:36px;overflow:hidden;border:2px solid rgba(255,143,224,.6);
   box-shadow:0 0 40px rgba(255,46,170,.45),0 30px 80px rgba(0,0,0,.6);background:#000;transform:rotate(-3deg);animation:float 7s ease-in-out infinite}
 @keyframes float{50%{transform:rotate(-1deg) translateY(-12px)}}
 .phone-frame img,.phone-frame video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.phone-tag{position:absolute;left:14px;top:14px;padding:8px 12px;border-radius:999px;background:rgba(7,3,15,.7);font:800 10.5px/1 var(--f-sans);letter-spacing:.18em;display:flex;align-items:center;gap:8px}
+.phone-tag{position:absolute;left:14px;top:14px;padding:8px 12px;border-radius:999px;background:rgba(7,3,15,.7);font:800 12px/1 var(--f-sans);letter-spacing:.16em;display:flex;align-items:center;gap:8px}
 .phone-tag .dot{width:8px;height:8px;border-radius:50%;background:#ff3b5c;box-shadow:0 0 10px #ff3b5c;animation:blink 1.2s infinite}
 @keyframes blink{50%{opacity:.25}}
 #local{overflow:hidden}
-/* film-reel strips */
-.reels{margin-top:80px;display:grid;gap:14px;transform:rotate(-2deg);width:110%;margin-left:-5%}
-.reel-row{overflow:hidden}
-.reel-track{display:flex;gap:14px;width:max-content}
-.js .reel-track.ready{animation:reel 46s linear infinite}
-.js .reel-row.rev .reel-track.ready{animation-direction:reverse;animation-duration:54s}
-.reel-track figure{width:170px;aspect-ratio:9/13;border-radius:14px;overflow:hidden;border:1px solid rgba(255,143,224,.25);flex:none}
-.reel-track img{width:100%;height:100%;object-fit:cover;filter:saturate(1.15);transition:transform .5s}
-.reel-track figure:hover img{transform:scale(1.08)}
-@keyframes reel{to{transform:translateX(-50%)}}
-@media (max-width:600px){.reel-track figure{width:120px}}
 @media (prefers-reduced-motion:reduce){
-  .sky,.sparks,.hero-media img,.hero-media video,.hero-title span,.phone-frame,.phone-glow{animation:none!important}
-  .reel-track{animation-duration:140s}
+  .sparks,.hero-media img,.hero-media video,.hero-title span,.phone-frame,.phone-glow{animation:none!important}
 }
 
 /* ===== scroll effects ===== */
@@ -329,7 +351,7 @@ footer{border-top:1px solid rgba(255,46,170,.2);padding:56px 0 120px;background:
 .js .stagger > .reveal{transform:translateY(40px) scale(.97)}
 .js .stagger > .reveal.in{transform:none}
 .js .tiers.stagger > .tier.silver.reveal.in{transform:translateY(-10px)}
-.js .step .step-n{display:inline-block;transform:scale(.3) rotate(-20deg);opacity:0;transition:transform .8s cubic-bezier(.3,1.6,.5,1) calc(var(--d,0s) + .3s),opacity .5s ease calc(var(--d,0s) + .3s)}
+.js .step .step-n{display:inline-block;transform:scale(.3) rotate(-20deg);opacity:0;transition:transform .8s cubic-bezier(.16,1,.3,1) calc(var(--d,0s) + .3s),opacity .5s ease calc(var(--d,0s) + .3s)}
 .js .step.in .step-n{transform:none;opacity:1}
 .hero .wrap{will-change:transform,opacity}
 .divider-glow{height:1px;width:min(900px,90%);margin:0 auto;background:linear-gradient(90deg,transparent,var(--pink),var(--cyan),transparent);transform:scaleX(0);transition:transform 1.2s ease;box-shadow:0 0 14px var(--pink)}
@@ -495,7 +517,7 @@ footer{border-top:1px solid rgba(255,46,170,.2);padding:56px 0 120px;background:
       <div class="steps stagger">
         <div class="step reveal"><div class="step-n neon-p">1</div><h3>Reserva</h3><p>Elige <b>Bronce, Plata o Golden</b> y pon tu nombre, email y teléfono aquí abajo.</p></div>
         <div class="step reveal"><div class="step-n neon-c">2</div><h3>Paga</h3><p>Pulsa el botón y paga en la página segura de <b>Revolut</b>: tarjeta, Apple Pay o Google Pay.</p></div>
-        <div class="step reveal"><div class="step-n neon-p">3</div><h3>Recibe tu QR</h3><p>Al confirmar el pago te llega <b>tu QR por email</b>. El día de la entrega en persona lo escaneamos y te damos tu entrada física.</p></div>
+        <div class="step reveal"><div class="step-n neon-p">3</div><h3>Recibe tu QR</h3><p>Al confirmar el pago te llega <b>tu QR por email</b>. El día de la entrega en persona lo escaneamos y te damos tu entrada física; fecha y sitio se anuncian cerca de la fiesta.</p></div>
       </div>
     </div>
   </section>
@@ -513,18 +535,20 @@ footer{border-top:1px solid rgba(255,46,170,.2);padding:56px 0 120px;background:
         <form class="qr-form" id="qr-form" novalidate>
           <div class="field">
             <label for="qr-type">Tipo de entrada</label>
-            <select id="qr-type" required>
+            <select id="qr-type" required aria-describedby="qr-type-err">
               <option value="" disabled selected>Elige tu entrada</option>
               <option value="Bronce — 42€">Bronce — 42€ · 3 cubatas + 2 chupitos</option>
               <option value="Plata — 50€">Plata — 50€ · 4 cubatas + 2 chupitos</option>
               <option value="Golden — 60€">Golden — 60€ · 5 cubatas + 2 chupitos</option>
             </select>
+            <p class="field-err" id="qr-type-err" hidden></p>
           </div>
-          <div class="field"><label for="qr-name">Nombre completo</label><input type="text" id="qr-name" placeholder="Como aparece en tu tarjeta" autocomplete="name" required></div>
+          <div class="field"><label for="qr-name">Nombre completo</label><input type="text" id="qr-name" placeholder="Nombre y apellidos" autocomplete="name" maxlength="80" required aria-describedby="qr-name-err"><p class="field-err" id="qr-name-err" hidden></p></div>
           <div class="row2">
-            <div class="field"><label for="qr-email">Email</label><input type="email" id="qr-email" placeholder="Aquí te llega el QR" autocomplete="email" required></div>
-            <div class="field"><label for="qr-phone">Teléfono</label><input type="tel" id="qr-phone" placeholder="Por si hay algún problema" autocomplete="tel" required></div>
+            <div class="field"><label for="qr-email">Email</label><input type="email" id="qr-email" placeholder="Aquí te llega el QR" autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false" maxlength="120" required aria-describedby="qr-email-err"><p class="field-err" id="qr-email-err" hidden></p></div>
+            <div class="field"><label for="qr-phone">Teléfono</label><input type="tel" id="qr-phone" placeholder="Por si hay algún problema" autocomplete="tel" inputmode="tel" maxlength="20" required aria-describedby="qr-phone-err"><p class="field-err" id="qr-phone-err" hidden></p></div>
           </div>
+          <p class="form-msg" id="qr-form-msg" role="alert" hidden></p>
           <div class="payment-block">
             <button type="button" class="payment-btn" id="payment-btn">Selecciona un tipo de entrada arriba</button>
           </div>
@@ -532,13 +556,32 @@ footer{border-top:1px solid rgba(255,46,170,.2);padding:56px 0 120px;background:
         </form>
 
         <div class="qr-result" id="qr-result" aria-live="polite">
-          <div class="qr-ticket-name" id="qr-ticket-name">¡Reserva guardada!</div>
+          <div class="qr-ticket-name" id="qr-ticket-name" tabindex="-1">¡Reserva guardada!</div>
           <div class="qr-ticket-meta" id="qr-ticket-meta"></div>
-          <div class="qr-ticket-code" id="qr-ticket-code"></div>
-          <a class="payment-btn" id="qr-pay-link" href="#" target="_blank" rel="noopener" style="display:none;margin-top:22px">Pagar con Revolut</a>
+          <div class="ref-row">
+            <div class="qr-ticket-code" id="qr-ticket-code"></div>
+            <button type="button" class="copy-btn" id="qr-copy-ref" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>Copiar referencia</span></button>
+          </div>
+          <ol class="pay-steps">
+            <li class="done"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+              <div><b>Reserva guardada</b><span>Tu plaza está apartada a tu nombre mientras pagas.</span></div></li>
+            <li class="now"><div class="dot">2</div>
+              <div><b>Paga ahora en Revolut</b>
+                <ul class="pay-facts">
+                  <li>No necesitas cuenta de Revolut: paga con tarjeta, Apple Pay o Google Pay.</li>
+                  <li id="qr-pay-name">Usa el mismo nombre que has puesto aquí.</li>
+                  <li>La entrada no se devuelve, pero si no puedes ir puedes pasársela a otra persona avisándonos antes.</li>
+                </ul>
+                <a class="payment-btn" id="qr-pay-link" href="#" target="_blank" rel="noopener" style="display:none">Pagar con Revolut</a></div></li>
+            <li><div class="dot">3</div>
+              <div><b>Recibe tu QR por email en unos 5 minutos</b><span id="qr-mail-line">Te llega al email que has puesto. Mira también en spam o promociones.</span></div></li>
+            <li><div class="dot">4</div>
+              <div><b>Cambia el QR por tu entrada física</b><span>Anunciaremos la fecha y el sitio de la entrega en persona cerca de la fiesta en <a href="https://www.instagram.com/thegoldennight.burgos/" target="_blank" rel="noopener">@thegoldennight.burgos</a>. Con esa entrada entras y canjeas tus copas.</span></div></li>
+          </ol>
+          <p class="pay-help">¿Has pagado hace más de 5 minutos y no te llega el QR? Revisa spam y <a id="qr-help-link" href="https://wa.me/34681887553" target="_blank" rel="noopener">escríbenos por WhatsApp</a> con tu referencia.</p>
         </div>
       </div>
-      <p class="qr-note">Primero guardamos tu reserva y después pagas en Revolut. Cuando comprobamos el cobro te enviamos el QR por email (normalmente en pocas horas). Es personal y de un solo uso.</p>
+      <p class="qr-note">Primero guardamos tu reserva y después pagas en Revolut. Cuando se confirma el cobro te llega el QR por email en unos 5 minutos. Es personal y de un solo uso.</p>
     </div>
   </section>
 
@@ -685,14 +728,6 @@ footer{border-top:1px solid rgba(255,46,170,.2);padding:56px 0 120px;background:
     window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
   }
 
-  function initAura(){
-    var root = document.documentElement, raf = 0, x = 50, y = 30;
-    window.addEventListener('pointermove', function(e){
-      x = e.clientX / window.innerWidth * 100; y = e.clientY / window.innerHeight * 100;
-      if(!raf) raf = requestAnimationFrame(function(){ root.style.setProperty('--mx', x + '%'); root.style.setProperty('--my', y + '%'); raf = 0; });
-    }, { passive: true });
-  }
-
   function initReveal(){
     var els = [].slice.call(document.querySelectorAll('.reveal'));
     function show(el){ el.classList.add('in'); }
@@ -741,9 +776,9 @@ footer{border-top:1px solid rgba(255,46,170,.2);padding:56px 0 120px;background:
     // Fechas en las que se abre cada caja. Añade "videoUrl" (enlace de YouTube para insertar) cuando tengáis el contenido.
     var surprises = [
       { title: 'Misterio 1', revealDate: '2026-10-12T18:00:00+02:00', videoUrl: null, hint: 'DJ ▒N▒ITA▒O' },
-      { title: 'Misterio 2', revealDate: '2026-11-01T00:00:00', videoUrl: null },
-      { title: 'Misterio 3', revealDate: '2026-11-25T00:00:00', videoUrl: null },
-      { title: 'Misterio 4', revealDate: '2026-12-15T00:00:00', videoUrl: null }
+      { title: 'Misterio 2', revealDate: '2026-11-01T00:00:00+01:00', videoUrl: null },
+      { title: 'Misterio 3', revealDate: '2026-11-25T00:00:00+01:00', videoUrl: null },
+      { title: 'Misterio 4', revealDate: '2026-12-15T00:00:00+01:00', videoUrl: null }
     ];
     var grid = document.getElementById('surprise-grid');
     if(grid.children.length) return; // idempotente
@@ -773,7 +808,9 @@ footer{border-top:1px solid rgba(255,46,170,.2);padding:56px 0 120px;background:
       b.classList.add('revealed');
       b.innerHTML = s.videoUrl
         ? '<div class="surprise-title">' + s.title + '</div><iframe src="' + s.videoUrl + '" title="' + s.title + '" style="width:100%;aspect-ratio:16/9;border:0;border-radius:12px" allowfullscreen></iframe>'
-        : '<div class="play-icon">' + play + '</div><div class="surprise-title">' + s.title + '</div><div class="surprise-ready">¡Desvelada! Muy pronto en nuestro Instagram</div>';
+        : '<a class="surprise-link" href="https://www.instagram.com/thegoldennight.burgos/" target="_blank" rel="noopener">' +
+          '<div class="play-icon">' + play + '</div><div class="surprise-title">' + s.title + '</div>' +
+          '<div class="surprise-ready">¡Desvelada! Míralo en nuestro Instagram</div></a>';
     }
     function update(){
       var now = new Date();
@@ -847,18 +884,107 @@ footer{border-top:1px solid rgba(255,46,170,.2);padding:56px 0 120px;background:
       .catch(function(){ jsonpRequest(url, onSuccess, onError); });
   }
 
+  // Validación en línea: cada campo dice qué falta y cómo arreglarlo
+  const EMAIL_FIX = { 'gmial.com':'gmail.com', 'gmai.com':'gmail.com', 'gmail.co':'gmail.com', 'gmail.es':'gmail.com', 'gamil.com':'gmail.com',
+    'hotmial.com':'hotmail.com', 'hotmal.com':'hotmail.com', 'hotmail.co':'hotmail.com', 'outlok.com':'outlook.com', 'yahoo.co':'yahoo.com', 'icloud.co':'icloud.com' };
+  const RULES = {
+    'qr-type': function(v){ return v ? '' : 'Elige qué entrada quieres.'; },
+    'qr-name': function(v){ return v.replace(/\s+/g,' ').length >= 3 && /\s/.test(v) ? '' : 'Escribe tu nombre y apellido, como en tu tarjeta.'; },
+    'qr-email': function(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) ? '' : 'Revisa el email: ahí te llega el QR (ejemplo: nombre@gmail.com).'; },
+    'qr-phone': function(v){ return v.replace(/[^\d]/g,'').length >= 9 ? '' : 'Escribe un teléfono de al menos 9 cifras.'; }
+  };
+  const touched = {};
+
+  function showFieldError(id, msg){
+    const input = document.getElementById(id);
+    const err = document.getElementById(id + '-err');
+    err.textContent = '';
+    if(msg){
+      err.textContent = msg;
+      err.hidden = false;
+      input.setAttribute('aria-invalid', 'true');
+    } else {
+      err.hidden = true;
+      input.removeAttribute('aria-invalid');
+    }
+    if(id === 'qr-email' && !msg){
+      // Aviso de errata frecuente en el dominio, sin bloquear el envío
+      const v = input.value.trim(), dom = v.split('@')[1];
+      if(dom && EMAIL_FIX[dom.toLowerCase()]){
+        const fixed = v.split('@')[0] + '@' + EMAIL_FIX[dom.toLowerCase()];
+        err.textContent = '¿Querías decir ';
+        const b = document.createElement('button');
+        b.type = 'button'; b.textContent = fixed;
+        b.addEventListener('click', function(){ input.value = fixed; showFieldError('qr-email', ''); input.focus(); });
+        err.appendChild(b); err.appendChild(document.createTextNode('?'));
+        err.hidden = false;
+      }
+    }
+  }
+
+  function checkField(id){
+    const el = document.getElementById(id);
+    const msg = RULES[id](el.value.trim());
+    showFieldError(id, msg);
+    return !msg;
+  }
+
+  Object.keys(RULES).forEach(function(id){
+    const el = document.getElementById(id);
+    el.addEventListener('blur', function(){ if(el.value.trim()) touched[id] = true; if(touched[id]) checkField(id); });
+    el.addEventListener('input', function(){ if(touched[id]) checkField(id); });
+    el.addEventListener('change', function(){ touched[id] = true; checkField(id); });
+  });
+
+  const formMsg = document.getElementById('qr-form-msg');
+  function showFormMsg(text){
+    formMsg.textContent = '';
+    if(!text){ formMsg.hidden = true; return; }
+    formMsg.appendChild(document.createTextNode(text + ' Si sigue fallando, '));
+    const a = document.createElement('a');
+    a.href = 'https://wa.me/34681887553?text=' + encodeURIComponent('Hola, no consigo reservar mi entrada en la web de Golden Night.');
+    a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'escríbenos por WhatsApp';
+    formMsg.appendChild(a); formMsg.appendChild(document.createTextNode('.'));
+    formMsg.hidden = false;
+  }
+
+  // Copiar la referencia de la reserva
+  document.getElementById('qr-copy-ref').addEventListener('click', function(){
+    const btn = this, ref = btn.getAttribute('data-ref') || '';
+    const label = btn.querySelector('span');
+    function done(ok){
+      label.textContent = ok ? 'Referencia copiada' : 'Mantén pulsado para copiar';
+      setTimeout(function(){ label.textContent = 'Copiar referencia'; }, 2500);
+    }
+    if(navigator.clipboard && window.isSecureContext){
+      navigator.clipboard.writeText(ref).then(function(){ done(true); }, function(){ done(false); });
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = ref; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      let ok = false; try { ok = document.execCommand('copy'); } catch(_){}
+      document.body.removeChild(ta); done(ok);
+    }
+  });
+
   let reserving = false;
   document.getElementById('payment-btn').addEventListener('click', function(e){
     e.preventDefault();
     if(this.classList.contains('disabled') || reserving) return;
 
-    const name = document.getElementById('qr-name').value.trim();
+    const name = document.getElementById('qr-name').value.trim().replace(/\s+/g,' ');
     const email = document.getElementById('qr-email').value.trim();
     const phone = document.getElementById('qr-phone').value.trim();
     const type = document.getElementById('qr-type').value;
 
-    if(!type || !name || !email || !phone){
-      alert('Rellena tu nombre, email y teléfono antes de pagar.');
+    showFormMsg('');
+    let firstBad = null;
+    Object.keys(RULES).forEach(function(id){
+      touched[id] = true;
+      if(!checkField(id) && !firstBad) firstBad = id;
+    });
+    if(firstBad){
+      document.getElementById(firstBad).focus();
       return;
     }
 
@@ -867,6 +993,8 @@ footer{border-top:1px solid rgba(255,46,170,.2);padding:56px 0 120px;background:
     reserving = true;
     btn.textContent = 'Guardando tu reserva…';
     btn.classList.add('disabled');
+    btn.disabled = true;
+    btn.setAttribute('aria-busy', 'true');
 
     const url = TICKET_API_URL +
       '?action=reservar' +
@@ -879,26 +1007,35 @@ footer{border-top:1px solid rgba(255,46,170,.2);padding:56px 0 120px;background:
       reserving = false;
       btn.textContent = oldText;
       btn.classList.remove('disabled');
-      alert(msg || 'No se pudo guardar la reserva. Inténtalo de nuevo en un momento.');
+      btn.disabled = false;
+      btn.removeAttribute('aria-busy');
+      showFormMsg(msg || 'No hemos podido guardar tu reserva: puede ser la conexión. Tus datos siguen aquí, vuelve a pulsar el botón.');
     }
 
     smartRequest(url, function(data){
       if(!data || !data.ok || !data.payUrl){ fail(data && data.error); return; }
 
       reserving = false;
+      btn.removeAttribute('aria-busy');
       document.getElementById('qr-form').style.display = 'none';
-      document.getElementById('qr-ticket-name').textContent = 'Reserva guardada ✔ · Paso 2: paga';
-      document.getElementById('qr-ticket-meta').textContent =
-        'Entrada ' + data.tipo + ' · ' + data.precio + '€. Paga con el botón de abajo usando el nombre "' + name +
-        '". En cuanto confirmemos tu pago te llega el QR a ' + email + ' (mira también en spam).';
+      document.getElementById('qr-ticket-name').textContent = 'Te falta pagar';
+      document.getElementById('qr-ticket-meta').textContent = 'Entrada ' + data.tipo + ' · ' + data.precio + ' €';
       document.getElementById('qr-ticket-code').textContent = 'Tu referencia: ' + data.ref;
+      const copy = document.getElementById('qr-copy-ref');
+      copy.setAttribute('data-ref', data.ref);
+      copy.hidden = false;
+      document.getElementById('qr-pay-name').textContent = 'Usa el nombre «' + name + '», el mismo que has puesto aquí.';
+      document.getElementById('qr-mail-line').textContent = 'Te llega a ' + email + '. Mira también en spam o promociones.';
+      document.getElementById('qr-help-link').href = 'https://wa.me/34681887553?text=' +
+        encodeURIComponent('Hola, he pagado mi entrada de Golden Night y no me ha llegado el QR. Mi referencia es ' + data.ref + '.');
       const pay = document.getElementById('qr-pay-link');
       pay.href = data.payUrl;
-      pay.textContent = 'Pagar ' + data.precio + '€ con Revolut';
+      pay.textContent = 'Pagar ' + data.precio + ' € con Revolut';
       pay.style.display = 'block';
       const box = document.getElementById('qr-result');
       box.classList.add('show');
-      box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      box.scrollIntoView({ behavior: (window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'), block: 'start' });
+      document.getElementById('qr-ticket-name').focus({ preventScroll: true });
     }, function(){ fail(); });
   });
 
@@ -948,19 +1085,6 @@ footer{border-top:1px solid rgba(255,46,170,.2);padding:56px 0 120px;background:
   }
 
 
-  function initReels(){
-    [].forEach.call(document.querySelectorAll('.reel-track'), function(t){
-      if(t.classList.contains('ready')) return;
-      var base = [].slice.call(t.children);
-      // copias hasta cubrir de sobra la pantalla; el CSS desplaza la mitad para un bucle sin cortes
-      var copies = 0;
-      while((t.scrollWidth < window.innerWidth * 2.2 || copies % 2 === 0) && copies < 12){
-        base.forEach(function(f){ var c = f.cloneNode(true); c.setAttribute('aria-hidden', 'true'); t.appendChild(c); });
-        copies++;
-      }
-      t.classList.add('ready');
-    });
-  }
 
 
   function initStagger(){
