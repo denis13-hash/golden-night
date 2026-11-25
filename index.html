@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Golden Night · Nochevieja 2026 → 2027 en Bella Ciao, Burgos</title>
-<meta name="description" content="La fiesta de Nochevieja en Bella Ciao, Burgos. 1 de enero a la 1:00, justo después de las campanadas. Entradas con copas y chupitos incluidos desde 42 €. Solo 250 plazas.">
+<meta name="description" content="La fiesta de Nochevieja en Bella Ciao, Burgos. 1 de enero a la 1:00, justo después de las campanadas. Entradas con copa incluida desde 11 €. Solo 250 plazas.">
 <meta name="theme-color" content="#07030f">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="Golden Night · Nochevieja en Bella Ciao, Burgos">
-<meta property="og:description" content="Justo después de las campanadas. Copas y chupitos incluidos desde 42 €. Solo 250 plazas.">
+<meta property="og:description" content="Justo después de las campanadas. Copa incluida desde 11 €. Solo 250 plazas.">
 <meta property="og:image" content="https://goldennightburgos.com/og-image.jpg">
 <meta property="og:url" content="https://goldennightburgos.com/">
 <meta name="twitter:card" content="summary_large_image">
@@ -116,12 +116,14 @@ header.nav.solid{background:rgba(7,3,15,.96);border-color:rgba(255,46,170,.18)}
 @keyframes mq{to{transform:translateX(-50%)}}
 
 /* tickets */
-.tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;align-items:stretch}
+.tiers{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;align-items:stretch}
+@media (max-width:1180px){.tiers{grid-template-columns:repeat(2,1fr);row-gap:34px}}
+@media (min-width:1181px){.tier{padding:32px 22px 26px}.tier-name{font-size:34px}.tier-price{font-size:64px}}
 .tier{--c:var(--bronze);position:relative;padding:34px 30px 30px;border-radius:var(--r);background:var(--card);border:2px solid var(--c);
   box-shadow:0 0 22px color-mix(in srgb,var(--c) 45%,transparent),inset 0 0 26px color-mix(in srgb,var(--c) 14%,transparent);
   display:flex;flex-direction:column;transition:transform .25s ease,box-shadow .3s ease;transform-style:preserve-3d}
 .tier:hover{box-shadow:0 0 34px color-mix(in srgb,var(--c) 65%,transparent),inset 0 0 30px color-mix(in srgb,var(--c) 20%,transparent)}
-.tier.silver{--c:var(--silver)}.tier.gold{--c:var(--gold)}
+.tier.silver{--c:var(--silver)}.tier.gold{--c:var(--gold)}.tier.single{--c:var(--cyan)}
 .tier-name{font:800 44px/1 var(--f-serif);color:var(--c);text-shadow:0 0 18px color-mix(in srgb,var(--c) 70%,transparent)}
 .tier-tag{margin-top:8px;font:700 11.5px/1.3 var(--f-sans);letter-spacing:.22em;color:var(--mute);text-transform:uppercase}
 .tier-price{margin:26px 0 18px;font:800 76px/1 var(--f-serif);color:#fff}
@@ -134,7 +136,7 @@ header.nav.solid{background:rgba(7,3,15,.96);border-color:rgba(255,46,170,.18)}
   font:800 11px/1 var(--f-sans);letter-spacing:.2em;color:var(--pink-l);white-space:nowrap;box-shadow:0 0 14px rgba(255,46,170,.55)}
 .tier.silver{transform:translateY(-10px)}
 .tiers-note{text-align:center;color:var(--dim);font-size:14px;margin-top:30px}
-@media (max-width:900px){.tiers{grid-template-columns:1fr;max-width:460px;margin-inline:auto}.tier.silver{transform:none;order:-1}}
+@media (max-width:900px){.tiers{grid-template-columns:1fr;max-width:460px;margin-inline:auto}.tier.silver{transform:none}}
 
 /* includes */
 .incl{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
@@ -403,7 +405,7 @@ footer{border-top:1px solid rgba(255,46,170,.2);padding:56px 0 120px;background:
       </div>
 
       <div class="hero-ctas">
-        <a class="btn" href="#entradas">Comprar entradas · desde 42 €</a>
+        <a class="btn" href="#entradas">Comprar entradas · desde 11 €</a>
         <a class="btn ghost" href="#local">Ver el local</a>
       </div>
     </div>
@@ -427,6 +429,16 @@ footer{border-top:1px solid rgba(255,46,170,.2);padding:56px 0 120px;background:
       </div>
 
       <div class="tiers stagger">
+        <article class="tier single reveal" data-tilt>
+          <div class="tier-name">Individual</div>
+          <div class="tier-tag">Entra con tu primera copa</div>
+          <div class="tier-price">11€</div>
+          <ul>
+            <li><svg viewBox="0 0 24 24"><path d="M6 3h12l-2 18H8z"/><path d="M7 8h10"/></svg>1 cubata</li>
+          </ul>
+          <a class="btn" href="#reserva" data-ticket="Individual — 11€">Elegir Individual</a>
+        </article>
+
         <article class="tier bronze reveal" data-tilt>
           <div class="tier-name">Bronce</div>
           <div class="tier-tag">Lo esencial para una gran noche</div>
@@ -515,7 +527,7 @@ footer{border-top:1px solid rgba(255,46,170,.2);padding:56px 0 120px;background:
         <h2 class="h2 neon-p">Cómo comprar</h2>
       </div>
       <div class="steps stagger">
-        <div class="step reveal"><div class="step-n neon-p">1</div><h3>Reserva</h3><p>Elige <b>Bronce, Plata o Golden</b> y pon tu nombre, email y teléfono aquí abajo.</p></div>
+        <div class="step reveal"><div class="step-n neon-p">1</div><h3>Reserva</h3><p>Elige <b>Individual, Bronce, Plata o Golden</b> y pon tu nombre, email y teléfono aquí abajo.</p></div>
         <div class="step reveal"><div class="step-n neon-c">2</div><h3>Paga</h3><p>Pulsa el botón y paga en la página segura de <b>Revolut</b>: tarjeta, Apple Pay o Google Pay.</p></div>
         <div class="step reveal"><div class="step-n neon-p">3</div><h3>Recibe tu QR</h3><p>Al confirmar el pago te llega <b>tu QR por email</b>. El día de la entrega en persona lo escaneamos y te damos tu entrada física; fecha y sitio se anuncian cerca de la fiesta.</p></div>
       </div>
@@ -537,6 +549,7 @@ footer{border-top:1px solid rgba(255,46,170,.2);padding:56px 0 120px;background:
             <label for="qr-type">Tipo de entrada</label>
             <select id="qr-type" required aria-describedby="qr-type-err">
               <option value="" disabled selected>Elige tu entrada</option>
+              <option value="Individual — 11€">Individual — 11€ · 1 cubata</option>
               <option value="Bronce — 42€">Bronce — 42€ · 3 cubatas + 2 chupitos</option>
               <option value="Plata — 50€">Plata — 50€ · 4 cubatas + 2 chupitos</option>
               <option value="Golden — 60€">Golden — 60€ · 5 cubatas + 2 chupitos</option>
@@ -605,7 +618,7 @@ footer{border-top:1px solid rgba(255,46,170,.2);padding:56px 0 120px;background:
       <div class="sec-head reveal"><div class="kicker">Todo lo que necesitas saber</div><h2 class="h2 neon-c">Preguntas</h2></div>
       <div class="faq reveal">
         <details open><summary>¿A qué hora abre la fiesta?</summary><p>La noche del 31 de diciembre al 1 de enero: abrimos a la 1:00, justo después de las campanadas.</p></details>
-        <details><summary>¿Qué incluye cada entrada?</summary><p>Bronce: 3 cubatas y 2 chupitos. Plata: 4 cubatas y 2 chupitos. Golden: 5 cubatas y 2 chupitos. Se canjean en la barra con los tickets de tu entrada física.</p></details>
+        <details><summary>¿Qué incluye cada entrada?</summary><p>Individual: 1 cubata. Bronce: 3 cubatas y 2 chupitos. Plata: 4 cubatas y 2 chupitos. Golden: 5 cubatas y 2 chupitos. Se canjean en la barra con los tickets de tu entrada física.</p></details>
         <details><summary>¿Cómo recibo mi entrada?</summary><p>Reserva en esta web y paga con Revolut. En cuanto confirmamos el pago te llega tu QR por email (mira también en spam). El día de la entrega en persona escaneamos ese QR y te damos tu entrada física, que es con la que entras la noche de la fiesta.</p></details>
         <details><summary>¿Cuál es la edad mínima?</summary><p>Solo mayores de 18 años. Se puede pedir DNI en la puerta.</p></details>
         <details><summary>¿Hay código de vestimenta?</summary><p>Elegante: dress to impress. Si quieres sumarte al tema Golden Night, un toque dorado siempre suma.</p></details>
@@ -674,7 +687,7 @@ footer{border-top:1px solid rgba(255,46,170,.2);padding:56px 0 120px;background:
 </footer>
 
 <div class="buybar" id="buybar">
-  <span>Golden Night · 1 ene 01:00<small>Desde 42 € · solo 250 plazas</small></span>
+  <span>Golden Night · 1 ene 01:00<small>Desde 11 € · solo 250 plazas</small></span>
   <a class="btn" href="#entradas">Comprar</a>
 </div>
 
