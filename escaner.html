@@ -2,381 +2,402 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Golden Night — Escáner de entradas</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#06030F">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="GN Escáner">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link href="https://fonts.googleapis.com/css2?family=Prata&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Prata&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink: #06030F;
-    --gold: #FF2E9A;
-    --gold-light: #FF8AD4;
-    --blue: #29D9FF;
-    --blue-light: #7FEBFF;
-    --cream: #F6EEDC;
+    --ink:#06030F; --card:#100a1f; --line:rgba(246,238,220,.12);
+    --pink:#FF2E9A; --pink-l:#FF8AD4; --cyan:#29D9FF; --cyan-l:#7FEBFF;
+    --cream:#F6EEDC; --mute:rgba(246,238,220,.6); --dim:rgba(246,238,220,.42);
+    --grad:linear-gradient(90deg,var(--pink-l),var(--cyan-l));
   }
-  *{ margin:0; padding:0; box-sizing:border-box; }
-  body{
-    background: var(--ink);
-    color: var(--cream);
-    font-family: 'Work Sans', sans-serif;
-    min-height: 100vh;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    padding: 30px 16px 60px;
-  }
-  h1{
-    font-family:'Prata', serif;
-    font-size: 26px;
-    color: var(--gold-light);
-    margin-bottom: 6px;
-    text-align:center;
-  }
-  .subtitle{ font-size: 13px; color: rgba(246,238,220,0.55); margin-bottom: 30px; text-align:center; }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{background:var(--ink)}
+  body{color:var(--cream);font-family:'Work Sans',sans-serif;min-height:100vh;min-height:100dvh;
+    padding:calc(env(safe-area-inset-top) + 18px) 16px calc(env(safe-area-inset-bottom) + 40px);
+    background:radial-gradient(120% 60% at 50% -10%,rgba(255,46,154,.18),transparent 60%),
+               radial-gradient(90% 50% at 100% 100%,rgba(41,217,255,.10),transparent 60%),var(--ink);
+    background-attachment:fixed}
+  .app{max-width:440px;margin:0 auto}
+  button,input{font:inherit;color:inherit}
+  button{cursor:pointer;border:0;background:none}
+  .view{display:none;animation:in .28s cubic-bezier(.16,1,.3,1)}
+  .view.on{display:block}
+  @keyframes in{from{opacity:0;transform:translateY(8px)}}
+  @media (prefers-reduced-motion:reduce){.view{animation:none}}
 
-  /* GATE DE CONTRASEÑA */
-  #gate{
-    width: 100%; max-width: 360px;
-    text-align:center;
-  }
-  #gate input{
-    width: 100%;
-    padding: 14px 16px;
-    background: rgba(246,238,220,0.05);
-    border: 1px solid rgba(255,46,154,0.35);
-    color: var(--cream);
-    font-size: 15px;
-    text-align:center;
-    letter-spacing: 0.1em;
-    margin-bottom: 14px;
-  }
-  #gate button{
-    width:100%;
-    padding: 14px;
-    background: linear-gradient(90deg, var(--gold-light), var(--blue-light));
-    border: 1px solid var(--gold);
-    color: #180620;
-    font-weight: 600;
-    font-size: 14px;
-    cursor: pointer;
-  }
-  #gate-error{ color: var(--gold-light); font-size: 12.5px; margin-top: 10px; min-height: 16px; }
+  /* marca */
+  .brand{text-align:center;margin:26px 0 30px}
+  .brand h1{font:400 34px/1 'Prata',serif;color:var(--pink-l);text-shadow:0 0 22px rgba(255,46,154,.55)}
+  .brand p{margin-top:10px;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim)}
 
-  /* ESCÁNER */
-  #scanner-app{ display:none; width: 100%; max-width: 420px; }
-  #reader{
-    width: 100%;
-    border: 2px solid var(--gold-light);
-    overflow:hidden;
-  }
-  #start-btn{
-    width:100%;
-    margin-top: 16px;
-    padding: 15px;
-    background: linear-gradient(90deg, var(--gold-light), var(--blue-light));
-    border: 1px solid var(--gold);
-    color: #180620;
-    font-weight: 600;
-    font-size: 15px;
-    cursor: pointer;
-  }
+  /* barra superior */
+  .top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px;min-height:44px}
+  .top h2{font:400 22px/1.1 'Prata',serif;color:var(--cream);flex:1}
+  .back{width:44px;height:44px;border-radius:14px;border:1px solid var(--line);display:grid;place-items:center;flex:none}
+  .back svg{width:20px;height:20px}
+  .chip{font-size:12.5px;color:var(--mute);border:1px solid var(--line);border-radius:999px;padding:8px 12px;white-space:nowrap}
 
-  #result{
-    margin-top: 24px;
-    padding: 24px;
-    text-align:center;
-    display:none;
-    border: 2px solid;
-  }
-  #result.valid{ border-color: var(--blue); background: rgba(41,217,255,0.08); display:block; }
-  #result.invalid{ border-color: var(--gold); background: rgba(255,46,154,0.08); display:block; }
-  #result .verdict{ font-family:'Prata', serif; font-size: 26px; margin-bottom: 10px; }
-  #result.valid .verdict{ color: var(--blue-light); }
-  #result.invalid .verdict{ color: var(--gold-light); }
-  #result .detail{ font-size: 14px; color: var(--cream); line-height: 1.6; }
+  /* campos y botones */
+  .field{display:block;margin-bottom:12px}
+  .field span{display:block;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin:0 0 8px 4px}
+  .input{width:100%;padding:15px 16px;border-radius:14px;background:rgba(246,238,220,.05);border:1px solid rgba(255,46,154,.35);font-size:16px;outline:none}
+  .input:focus{border-color:var(--pink-l);box-shadow:0 0 0 3px rgba(255,46,154,.2)}
+  .btn{width:100%;padding:16px;border-radius:14px;background:var(--grad);color:#180620;font-weight:700;font-size:15px;
+    box-shadow:0 6px 24px rgba(255,46,154,.25);transition:transform .15s,opacity .15s}
+  .btn:active{transform:scale(.98)}
+  .btn[disabled]{opacity:.6}
+  .btn-ghost{width:100%;padding:14px;border-radius:14px;border:1px solid var(--line);font-size:14px;font-weight:600;color:var(--cream)}
+  .msg{min-height:20px;margin-top:12px;text-align:center;font-size:13.5px;color:var(--pink-l)}
 
-  #scan-again{
-    margin-top: 18px;
-    width:100%;
-    padding: 13px;
-    background: transparent;
-    border: 1px solid rgba(246,238,220,0.3);
-    color: var(--cream);
-    font-size: 13px;
-    cursor: pointer;
-    display:none;
-  }
+  /* inicio */
+  .hello{font-size:14px;color:var(--mute);margin-bottom:6px}
+  .hello b{color:var(--cream)}
+  .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0 18px}
+  .stat{border:1px solid var(--line);border-radius:16px;padding:14px 16px;background:rgba(16,10,31,.6)}
+  .stat b{display:block;font:400 30px/1 'Prata',serif;color:var(--cyan-l)}
+  .stat span{display:block;margin-top:6px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+  .tile{display:flex;align-items:center;gap:16px;width:100%;text-align:left;padding:22px 20px;margin-bottom:12px;border-radius:20px;
+    background:var(--card);border:1.5px solid var(--c);box-shadow:0 0 22px color-mix(in srgb,var(--c) 30%,transparent),inset 0 0 20px color-mix(in srgb,var(--c) 10%,transparent);transition:transform .15s}
+  .tile:active{transform:scale(.98)}
+  .tile .ic{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;flex:none;background:color-mix(in srgb,var(--c) 16%,transparent)}
+  .tile .ic svg{width:28px;height:28px;stroke:var(--c);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .tile b{display:block;font:400 21px/1.15 'Prata',serif}
+  .tile small{display:block;margin-top:5px;font-size:13px;color:var(--mute)}
+  .tile .arrow{margin-left:auto;width:20px;height:20px;stroke:var(--dim);fill:none;stroke-width:2;flex:none}
+  .t-scan{--c:var(--pink)} .t-list{--c:var(--cyan)}
+  .logout{display:block;margin:22px auto 0;font-size:13.5px;color:var(--dim);text-decoration:underline;text-underline-offset:3px;padding:8px}
 
-  #manual-entry{
-    margin-top: 34px;
-    padding-top: 24px;
-    border-top: 1px solid rgba(246,238,220,0.15);
-  }
-  .manual-label{
-    font-size: 12px;
-    color: rgba(246,238,220,0.5);
-    text-align:center;
-    margin-bottom: 12px;
-  }
-  .manual-row{
-    display:flex;
-    gap: 8px;
-  }
-  #manual-code{
-    flex:1;
-    padding: 12px 14px;
-    background: rgba(246,238,220,0.05);
-    border: 1px solid rgba(255,46,154,0.35);
-    color: var(--cream);
-    font-size: 14px;
-    text-transform: uppercase;
-  }
-  #manual-submit{
-    padding: 12px 18px;
-    background: linear-gradient(90deg, var(--gold-light), var(--blue-light));
-    border: 1px solid var(--gold);
-    color: #180620;
-    font-weight: 600;
-    font-size: 13px;
-    cursor: pointer;
-  }
+  /* escáner */
+  #reader{width:100%;border-radius:20px;overflow:hidden;border:2px solid var(--pink-l);background:#000;min-height:0}
+  #reader:empty{display:none}
+  #reader video{display:block}
+  #start-btn{margin-top:4px}
+  #result{display:none;margin-top:18px;padding:26px 20px;border-radius:20px;text-align:center;border:2px solid}
+  #result.ok{display:block;border-color:var(--cyan);background:rgba(41,217,255,.09)}
+  #result.ko{display:block;border-color:var(--pink);background:rgba(255,46,154,.09)}
+  #result .verdict{font:400 25px/1.2 'Prata',serif;margin-bottom:8px}
+  #result.ok .verdict{color:var(--cyan-l)} #result.ko .verdict{color:var(--pink-l)}
+  #result .detail{font-size:15px;line-height:1.5}
+  #scan-again{display:none;margin-top:12px}
+  .manual{margin-top:28px;padding-top:22px;border-top:1px solid var(--line)}
+  .manual p{font-size:13px;color:var(--dim);text-align:center;margin-bottom:12px}
+  .row{display:flex;gap:8px}
+  .row .input{text-transform:uppercase}
+  .row .btn{width:auto;padding:0 18px;box-shadow:none}
+
+  /* lista */
+  .search{margin-bottom:14px}
+  .filters{display:flex;gap:8px;margin-bottom:14px}
+  .filters button{flex:1;padding:10px;border-radius:12px;border:1px solid var(--line);font-size:13px;font-weight:600;color:var(--mute)}
+  .filters button[aria-pressed="true"]{border-color:var(--cyan);color:var(--cyan-l);background:rgba(41,217,255,.08)}
+  .list{list-style:none;display:grid;gap:8px}
+  .item{display:flex;gap:12px;align-items:center;padding:14px;border-radius:16px;background:rgba(16,10,31,.7);border:1px solid var(--line)}
+  .dot{width:10px;height:10px;border-radius:50%;flex:none;background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
+  .item.ko .dot{background:var(--pink);box-shadow:0 0 10px var(--pink)}
+  .item .who{flex:1;min-width:0}
+  .item .who b{display:block;font-weight:600;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .item .who small{display:block;margin-top:3px;font-size:12.5px;color:var(--mute);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .item .when{text-align:right;font-size:12.5px;color:var(--dim);flex:none}
+  .item .when b{display:block;color:var(--cream);font-weight:600;font-size:13.5px}
+  .empty{text-align:center;color:var(--dim);font-size:14px;padding:30px 10px}
+  .refresh{width:44px;height:44px;border-radius:14px;border:1px solid var(--line);display:grid;place-items:center;flex:none}
+  .refresh svg{width:19px;height:19px;stroke:var(--cream);fill:none;stroke-width:2;stroke-linecap:round}
+  .refresh.spin svg{animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  :focus-visible{outline:2px solid var(--cyan-l);outline-offset:2px}
 </style>
 </head>
 <body>
+<main class="app">
 
-  <h1>Golden Night</h1>
-  <div class="subtitle">Escáner de entradas — solo personal autorizado</div>
+  <!-- LOGIN -->
+  <section class="view on" id="v-login" aria-labelledby="t-login">
+    <div class="brand">
+      <h1 id="t-login">Golden Night</h1>
+      <p>Escáner · solo personal</p>
+    </div>
+    <form id="login-form" novalidate>
+      <label class="field"><span>Usuario</span>
+        <input class="input" id="gate-user" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required>
+      </label>
+      <label class="field"><span>Contraseña</span>
+        <input class="input" type="password" id="gate-password" autocomplete="current-password" required>
+      </label>
+      <button class="btn" id="gate-submit" type="submit" style="margin-top:6px">Entrar</button>
+      <p class="msg" id="gate-error" role="alert"></p>
+    </form>
+  </section>
 
-  <div id="gate">
-    <input type="text" id="gate-user" placeholder="Usuario" autocomplete="username" autocapitalize="none" autocorrect="off">
-    <input type="password" id="gate-password" placeholder="Contraseña" autocomplete="current-password">
-    <button id="gate-submit">Entrar</button>
-    <div id="gate-error"></div>
-  </div>
+  <!-- INICIO -->
+  <section class="view" id="v-home" aria-labelledby="t-home">
+    <div class="brand" style="margin:10px 0 22px"><h1 id="t-home">Golden Night</h1><p>Puerta · 1 de enero</p></div>
+    <p class="hello">Hola, <b id="hello-user"></b></p>
+    <div class="stats">
+      <div class="stat"><b id="st-dentro">–</b><span>Dentro</span></div>
+      <div class="stat"><b id="st-pagadas">–</b><span>Vendidas</span></div>
+    </div>
+    <button class="tile t-scan" data-go="v-scan">
+      <span class="ic"><svg viewBox="0 0 24 24"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><path d="M4 12h16"/></svg></span>
+      <span><b>Escanear</b><small>Lee el QR de la entrada</small></span>
+      <svg class="arrow" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
+    <button class="tile t-list" data-go="v-list">
+      <span class="ic"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6h.01M4 12h.01M4 18h.01"/></svg></span>
+      <span><b>Entradas escaneadas</b><small>Quién ha entrado y a qué hora</small></span>
+      <svg class="arrow" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
+    <button class="logout" id="logout">Cerrar sesión</button>
+  </section>
 
-  <div id="scanner-app">
+  <!-- ESCÁNER -->
+  <section class="view" id="v-scan" aria-labelledby="t-scan">
+    <div class="top">
+      <button class="back" data-go="v-home" aria-label="Volver al inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg></button>
+      <h2 id="t-scan">Escanear</h2>
+      <span class="chip" id="scan-user"></span>
+    </div>
     <div id="reader"></div>
-    <button id="start-btn">Activar cámara</button>
-    <div id="result">
+    <button class="btn" id="start-btn">Activar cámara</button>
+    <div id="result" role="status" aria-live="polite">
       <div class="verdict" id="result-verdict"></div>
       <div class="detail" id="result-detail"></div>
     </div>
-    <button id="scan-again">Escanear otra entrada</button>
-
-    <div id="manual-entry">
-      <div class="manual-label">¿No lee el QR? Escribe el código a mano</div>
-      <div class="manual-row">
-        <input type="text" id="manual-code" placeholder="GN-XXXXXX">
-        <button id="manual-submit">Comprobar</button>
-      </div>
+    <button class="btn" id="scan-again">Escanear otra entrada</button>
+    <div class="manual">
+      <p>¿No lee el QR? Escribe el código</p>
+      <form class="row" id="manual-form">
+        <input class="input" id="manual-code" placeholder="GN-0000-XXXX" aria-label="Código de la entrada" autocomplete="off" autocorrect="off" spellcheck="false">
+        <button class="btn" id="manual-submit" type="submit">Comprobar</button>
+      </form>
     </div>
+  </section>
 
-    <pre id="debug-log" style="margin-top:24px;padding:12px;background:rgba(246,238,220,0.05);border:1px solid rgba(246,238,220,0.15);color:rgba(246,238,220,0.6);font-size:11px;white-space:pre-wrap;word-break:break-all;max-height:200px;overflow:auto;"></pre>
-  </div>
+  <!-- LISTA -->
+  <section class="view" id="v-list" aria-labelledby="t-list">
+    <div class="top">
+      <button class="back" data-go="v-home" aria-label="Volver al inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg></button>
+      <h2 id="t-list">Escaneadas</h2>
+      <button class="refresh" id="refresh" aria-label="Actualizar"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg></button>
+    </div>
+    <div class="stats" style="margin-top:0">
+      <div class="stat"><b id="ls-dentro">–</b><span>Dentro</span></div>
+      <div class="stat"><b id="ls-pagadas">–</b><span>Vendidas</span></div>
+    </div>
+    <input class="input search" id="search" type="search" placeholder="Buscar nombre o código" aria-label="Buscar nombre o código">
+    <div class="filters" role="group" aria-label="Filtrar">
+      <button data-f="all" aria-pressed="true">Todas</button>
+      <button data-f="ok" aria-pressed="false">Válidas</button>
+      <button data-f="ko" aria-pressed="false">Rechazadas</button>
+    </div>
+    <ul class="list" id="list"></ul>
+    <p class="empty" id="empty">Cargando…</p>
+  </section>
+
+</main>
 
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script>
   // Usuarios y contraseñas NO están en la página: los comprueba el servidor (USUARIOS en Apps Script)
   const TICKET_API_URL = 'https://script.google.com/macros/s/AKfycbxMoVpKwKCIK-KTrMdTYUg-LcpDNIuvAUqlUUAOAgUBeDYDtVMQR4XKUmdMfJrmQdKvkA/exec';
   let doorKey = '', doorUser = '';
+  const $ = function(id){ return document.getElementById(id); };
 
-  document.getElementById('gate-submit').addEventListener('click', function(){
-    const user = document.getElementById('gate-user').value.trim();
-    const val = document.getElementById('gate-password').value;
-    document.getElementById('gate-error').textContent = 'Comprobando…';
-    smartRequest(TICKET_API_URL + '?action=login&user=' + encodeURIComponent(user) + '&key=' + encodeURIComponent(val), function(data){
-      if(data && data.ok){
-        doorKey = val; doorUser = user;
-        document.getElementById('gate').style.display = 'none';
-        document.getElementById('scanner-app').style.display = 'block';
-      } else {
-        document.getElementById('gate-error').textContent = 'Usuario o contraseña incorrectos';
-      }
-    }, function(){
-      document.getElementById('gate-error').textContent = 'Sin conexión, inténtalo de nuevo';
-    });
+  // ---------- Peticiones (fetch y, si falla, JSONP) ----------
+  function jsonpRequest(url, onSuccess, onError){
+    const cb = 'jsonpCallback_' + Date.now() + '_' + Math.floor(Math.random()*10000);
+    const script = document.createElement('script');
+    let finished = false;
+    const timeout = setTimeout(function(){ if(finished) return; finished = true; cleanup(); onError(); }, 25000);
+    function cleanup(){ clearTimeout(timeout); delete window[cb]; if(script.parentNode) script.parentNode.removeChild(script); }
+    window[cb] = function(data){ if(finished) return; finished = true; cleanup(); onSuccess(data); };
+    script.src = url + (url.indexOf('?') > -1 ? '&' : '?') + 'callback=' + cb;
+    script.onerror = function(){ if(finished) return; finished = true; cleanup(); onError(); };
+    document.body.appendChild(script);
+  }
+  function smartRequest(url, onSuccess, onError){
+    fetch(url).then(function(r){ return r.json(); }).then(onSuccess)
+      .catch(function(){ jsonpRequest(url, onSuccess, onError); });
+  }
+  function api(action, extra){
+    return TICKET_API_URL + '?action=' + action + '&user=' + encodeURIComponent(doorUser) +
+      '&key=' + encodeURIComponent(doorKey) + (extra || '');
+  }
+
+  // ---------- Navegación ----------
+  function go(id){
+    if(id !== 'v-scan') stopScanner();
+    document.querySelectorAll('.view').forEach(function(v){ v.classList.toggle('on', v.id === id); });
+    window.scrollTo(0, 0);
+    if(id === 'v-home' || id === 'v-list') cargarEscaneos();
+  }
+  document.querySelectorAll('[data-go]').forEach(function(b){
+    b.addEventListener('click', function(){ go(b.getAttribute('data-go')); });
   });
 
-  let html5QrCode;
-  let scanning = false;
+  // ---------- Login ----------
+  $('login-form').addEventListener('submit', function(e){
+    e.preventDefault();
+    const user = $('gate-user').value.trim(), val = $('gate-password').value;
+    if(!user || !val){ $('gate-error').textContent = 'Escribe usuario y contraseña'; return; }
+    $('gate-error').textContent = '';
+    $('gate-submit').disabled = true; $('gate-submit').textContent = 'Comprobando…';
+    doorUser = user; doorKey = val;
+    smartRequest(api('login'), function(data){
+      $('gate-submit').disabled = false; $('gate-submit').textContent = 'Entrar';
+      if(data && data.ok){
+        $('hello-user').textContent = user; $('scan-user').textContent = user;
+        $('gate-password').value = '';
+        go('v-home');
+      } else {
+        doorUser = doorKey = '';
+        $('gate-error').textContent = 'Usuario o contraseña incorrectos';
+      }
+    }, function(){
+      doorUser = doorKey = '';
+      $('gate-submit').disabled = false; $('gate-submit').textContent = 'Entrar';
+      $('gate-error').textContent = 'Sin conexión, inténtalo de nuevo';
+    });
+  });
+  $('logout').addEventListener('click', function(){ doorUser = doorKey = ''; go('v-login'); });
+
+  // ---------- Escáner ----------
+  let html5QrCode, scanning = false, alreadyHandled = false;
 
   function startScanner(){
-    html5QrCode = new Html5Qrcode('reader');
-
+    html5QrCode = html5QrCode || new Html5Qrcode('reader');
+    alreadyHandled = false;
     Html5Qrcode.getCameras().then(function(cameras){
       let cameraId = { facingMode: 'environment' };
       if(cameras && cameras.length){
-        const backCam = cameras.find(function(c){
-          return /back|rear|trasera|environment/i.test(c.label);
-        });
+        const backCam = cameras.find(function(c){ return /back|rear|trasera|environment/i.test(c.label); });
         cameraId = backCam ? backCam.id : cameras[cameras.length - 1].id;
       }
-
       scanning = true;
-      html5QrCode.start(
-        cameraId,
-        {
-          fps: 10,
-          qrbox: { width: 250, height: 250 },
-          aspectRatio: 1.0,
-          experimentalFeatures: { useBarCodeDetectorIfSupported: true }
-        },
+      html5QrCode.start(cameraId,
+        { fps: 10, qrbox: { width: 240, height: 240 }, aspectRatio: 1.0, experimentalFeatures: { useBarCodeDetectorIfSupported: true } },
         onScanSuccess
       ).catch(function(){
         // Si falla con el id concreto, probamos con facingMode como respaldo
-        html5QrCode.start(
-          { facingMode: 'environment' },
-          { fps: 10, qrbox: { width: 250, height: 250 } },
-          onScanSuccess
-        );
+        html5QrCode.start({ facingMode: 'environment' }, { fps: 10, qrbox: { width: 240, height: 240 } }, onScanSuccess);
       });
-
-      document.getElementById('start-btn').style.display = 'none';
+      $('start-btn').style.display = 'none';
     }).catch(function(){
-      alert('No se pudo acceder a la cámara. Revisa que le hayas dado permiso en Ajustes → Safari → Cámara.');
+      showResult(false, { reason: 'Sin acceso a la cámara', ticketType: 'Dale permiso en Ajustes → Safari → Cámara' });
     });
   }
-
   function stopScanner(){
-    if(html5QrCode && scanning){
-      html5QrCode.stop().then(function(){ scanning = false; });
-    }
+    if(html5QrCode && scanning){ scanning = false; html5QrCode.stop().catch(function(){}); }
   }
-
-  let alreadyHandled = false;
-
-  function onScanSuccess(decodedText){
+  function onScanSuccess(text){
     if(alreadyHandled) return;
     alreadyHandled = true;
     stopScanner();
-    verificar(decodedText.trim());
-  }
-
-  function log(msg){
-    const el = document.getElementById('debug-log');
-    const time = new Date().toLocaleTimeString();
-    el.textContent += '[' + time + '] ' + msg + '\n';
-    el.scrollTop = el.scrollHeight;
-  }
-
-  function jsonpRequest(url, onSuccess, onError){
-    const callbackName = 'jsonpCallback_' + Date.now() + '_' + Math.floor(Math.random()*10000);
-    const script = document.createElement('script');
-    let finished = false;
-
-    log('[JSONP] Solicitando: ' + url);
-
-    const timeout = setTimeout(function(){
-      if(finished) return;
-      finished = true;
-      log('[JSONP] TIMEOUT tras 25s sin respuesta');
-      cleanup();
-      onError();
-    }, 25000);
-
-    function cleanup(){
-      clearTimeout(timeout);
-      delete window[callbackName];
-      if(script.parentNode) script.parentNode.removeChild(script);
-    }
-
-    window[callbackName] = function(data){
-      if(finished) return;
-      finished = true;
-      log('[JSONP] Respuesta recibida: ' + JSON.stringify(data));
-      cleanup();
-      onSuccess(data);
-    };
-
-    script.src = url + (url.indexOf('?') > -1 ? '&' : '?') + 'callback=' + callbackName;
-    script.onerror = function(){
-      if(finished) return;
-      finished = true;
-      log('[JSONP] ERROR: el script no cargó (onerror disparado)');
-      cleanup();
-      onError();
-    };
-    log('[JSONP] Insertando script en la página…');
-    document.body.appendChild(script);
-  }
-
-  function smartRequest(url, onSuccess, onError){
-    log('[FETCH] Intentando fetch: ' + url);
-    fetch(url)
-      .then(function(res){ return res.json(); })
-      .then(function(data){
-        log('[FETCH] Respuesta recibida: ' + JSON.stringify(data));
-        onSuccess(data);
-      })
-      .catch(function(err){
-        log('[FETCH] Falló (' + err.message + '), probando con JSONP…');
-        jsonpRequest(url, onSuccess, onError);
-      });
+    verificar(text.trim());
   }
 
   function verificar(code){
-    const url = TICKET_API_URL + '?action=verificar&code=' + encodeURIComponent(code) + '&user=' + encodeURIComponent(doorUser) + '&key=' + encodeURIComponent(doorKey);
-    smartRequest(url, function(data){
+    $('result').className = ''; $('result').style.display = 'block';
+    $('result-verdict').textContent = 'Comprobando…'; $('result-detail').textContent = code;
+    smartRequest(api('verificar', '&code=' + encodeURIComponent(code)), function(data){
       showResult(data.valid, data);
     }, function(){
-      showResult(false, { reason: 'ERROR DE CONEXIÓN', name: '', ticketType: 'Puede que sí se haya registrado — revisa la Google Sheet si tienes dudas antes de dejar pasar dos veces' });
+      showResult(false, { reason: 'Error de conexión', ticketType: 'Puede que sí se haya registrado: mira "Entradas escaneadas" antes de dejar pasar dos veces' });
     });
   }
 
   function showResult(isValid, data){
-    const resultEl = document.getElementById('result');
-    const verdictEl = document.getElementById('result-verdict');
-    const detailEl = document.getElementById('result-detail');
-
-    resultEl.style.display = 'block';
-    resultEl.style.borderColor = isValid ? '#29D9FF' : '#FF2E9A';
-    resultEl.style.background = isValid ? 'rgba(41,217,255,0.08)' : 'rgba(255,46,154,0.08)';
-
-    if(isValid){
-      verdictEl.style.color = '#7FEBFF';
-      verdictEl.textContent = '✅ VÁLIDA — ENTRADA LEÍDA';
-      detailEl.textContent = (data.name || '') + ' — ' + (data.ticketType || '');
-    } else {
-      verdictEl.style.color = '#FF8AD4';
-      verdictEl.textContent = '❌ ' + (data.reason || 'NO VÁLIDA').toUpperCase();
-      if(data.name){
-        detailEl.textContent = data.name + ' — ' + data.ticketType;
-      } else if(data.ticketType){
-        detailEl.textContent = data.ticketType;
-      } else {
-        detailEl.textContent = 'Código no reconocido';
-      }
-    }
-    document.getElementById('scan-again').style.display = 'block';
+    $('result').style.display = '';
+    $('result').className = isValid ? 'ok' : 'ko';
+    $('result-verdict').textContent = isValid ? '✅ Válida, puede pasar' : '❌ ' + (data.reason || 'No válida');
+    $('result-detail').textContent = data.name ? data.name + ' · ' + (data.ticketType || '') : (data.ticketType || 'Código no reconocido');
+    $('scan-again').style.display = 'block';
+    $('start-btn').style.display = 'none';
+    if(navigator.vibrate) navigator.vibrate(isValid ? 80 : [60, 60, 60]);
   }
 
-  // Pulsar Enter / "Ir" en el teclado del móvil también cuenta
-  document.getElementById('gate-password').addEventListener('keydown', function(e){
-    if(e.key === 'Enter'){ e.preventDefault(); document.getElementById('gate-submit').click(); }
+  $('start-btn').addEventListener('click', startScanner);
+  $('scan-again').addEventListener('click', function(){
+    $('result').className = ''; $('result').style.display = 'none';
+    $('scan-again').style.display = 'none';
+    $('manual-code').value = '';
+    startScanner();
   });
-  document.getElementById('manual-code').addEventListener('keydown', function(e){
-    if(e.key === 'Enter'){ e.preventDefault(); document.getElementById('manual-submit').click(); }
-  });
-
-  document.getElementById('start-btn').addEventListener('click', startScanner);
-  document.getElementById('scan-again').addEventListener('click', function(){
-    alreadyHandled = false;
-    document.getElementById('result').style.display = 'none';
-    document.getElementById('scan-again').style.display = 'none';
-    document.getElementById('start-btn').style.display = 'block';
-  });
-
-  document.getElementById('manual-submit').addEventListener('click', function(){
-    const code = document.getElementById('manual-code').value.trim().toUpperCase();
+  $('manual-form').addEventListener('submit', function(e){
+    e.preventDefault();
+    const code = $('manual-code').value.trim().toUpperCase();
     if(!code) return;
+    stopScanner();
+    $('start-btn').style.display = 'none';
     verificar(code);
   });
-</script>
 
+  // ---------- Entradas escaneadas ----------
+  let escaneos = [], filtro = 'all';
+
+  function cargarEscaneos(){
+    if(!doorUser) return;
+    $('refresh').classList.add('spin');
+    smartRequest(api('escaneos'), function(data){
+      $('refresh').classList.remove('spin');
+      if(!data || !data.ok){ $('empty').textContent = 'No se pudo cargar'; return; }
+      $('st-dentro').textContent = $('ls-dentro').textContent = data.dentro;
+      $('st-pagadas').textContent = $('ls-pagadas').textContent = data.pagadas;
+      escaneos = data.lista || [];
+      pintarLista();
+    }, function(){
+      $('refresh').classList.remove('spin');
+      $('empty').textContent = 'Sin conexión, pulsa actualizar';
+    });
+  }
+
+  function pintarLista(){
+    const q = $('search').value.trim().toLowerCase();
+    const ul = $('list');
+    ul.textContent = '';
+    escaneos.filter(function(e){
+      const ok = e.res === 'VÁLIDA';
+      if(filtro === 'ok' && !ok) return false;
+      if(filtro === 'ko' && ok) return false;
+      return !q || String(e.name).toLowerCase().indexOf(q) > -1 || String(e.code).toLowerCase().indexOf(q) > -1;
+    }).forEach(function(e){
+      const ok = e.res === 'VÁLIDA';
+      const li = document.createElement('li');
+      li.className = 'item' + (ok ? '' : ' ko');
+      const dot = document.createElement('span'); dot.className = 'dot';
+      const who = document.createElement('div'); who.className = 'who';
+      const b = document.createElement('b'); b.textContent = e.name || e.code || '—';
+      const sm = document.createElement('small');
+      sm.textContent = ok ? [e.type, e.code].filter(Boolean).join(' · ') : e.res;
+      who.append(b, sm);
+      const when = document.createElement('div'); when.className = 'when';
+      const h = document.createElement('b'); h.textContent = String(e.hora).split(' ')[1] || e.hora;
+      const u = document.createElement('span'); u.textContent = e.user;
+      when.append(h, u);
+      li.append(dot, who, when);
+      ul.appendChild(li);
+    });
+    $('empty').style.display = ul.children.length ? 'none' : 'block';
+    if(!ul.children.length) $('empty').textContent = escaneos.length ? 'Nada coincide con la búsqueda' : 'Todavía no se ha escaneado ninguna entrada';
+  }
+
+  $('refresh').addEventListener('click', cargarEscaneos);
+  $('search').addEventListener('input', pintarLista);
+  document.querySelectorAll('.filters button').forEach(function(b){
+    b.addEventListener('click', function(){
+      filtro = b.getAttribute('data-f');
+      document.querySelectorAll('.filters button').forEach(function(x){ x.setAttribute('aria-pressed', String(x === b)); });
+      pintarLista();
+    });
+  });
+</script>
 </body>
 </html>
